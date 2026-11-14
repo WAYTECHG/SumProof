@@ -1,0 +1,10 @@
+{
+ "exact_top10_identical_to_faiss": "150/150",
+ "routed_top10_identical_to_faiss": "150/150",
+ "exact_ms_median": 26.5,
+ "exact_ms_p95": 30.36,
+ "hnsw_ms_median": 2.18,
+ "hnsw_ms_p95": 27.24,
+ "hnsw_top10_overlap_with_exact": 0.996,
+ "table_size": "183 MB"
+}

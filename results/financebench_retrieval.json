@@ -1,0 +1,70 @@
+{
+ "n_questions": 150,
+ "n_pages": 12013,
+ "n_filings": 84,
+ "router_kept_right_filing": 0.993,
+ "metrics": {
+  "1_bm25": {
+   "R@1": 0.06,
+   "R@5": 0.113,
+   "R@10": 0.147,
+   "R@20": 0.2,
+   "MRR@10": 0.086
+  },
+  "2_dense": {
+   "R@1": 0.3,
+   "R@5": 0.527,
+   "R@10": 0.687,
+   "R@20": 0.76,
+   "MRR@10": 0.412
+  },
+  "3_hybrid_rrf": {
+   "R@1": 0.1,
+   "R@5": 0.287,
+   "R@10": 0.433,
+   "R@20": 0.627,
+   "MRR@10": 0.178
+  },
+  "4_dense_routed": {
+   "R@1": 0.32,
+   "R@5": 0.607,
+   "R@10": 0.713,
+   "R@20": 0.78,
+   "MRR@10": 0.441
+  },
+  "5_dense_routed_reranked": {
+   "R@1": 0.393,
+   "R@5": 0.713,
+   "R@10": 0.78,
+   "R@20": 0.827,
+   "MRR@10": 0.522
+  }
+ },
+ "recall@5_by_question_type": {
+  "1_bm25": {
+   "domain-relevant": 0.1,
+   "metrics-generated": 0.0,
+   "novel-generated": 0.24
+  },
+  "2_dense": {
+   "domain-relevant": 0.42,
+   "metrics-generated": 0.82,
+   "novel-generated": 0.34
+  },
+  "3_hybrid_rrf": {
+   "domain-relevant": 0.22,
+   "metrics-generated": 0.3,
+   "novel-generated": 0.34
+  },
+  "4_dense_routed": {
+   "domain-relevant": 0.42,
+   "metrics-generated": 0.92,
+   "novel-generated": 0.48
+  },
+  "5_dense_routed_reranked": {
+   "domain-relevant": 0.58,
+   "metrics-generated": 0.94,
+   "novel-generated": 0.62
+  }
+ }
+}

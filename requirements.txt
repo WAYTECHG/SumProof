@@ -1,0 +1,16 @@
+# Financial retrieval, vector stores, receipt metrics and tests (CPU; Windows or Linux)
+numpy
+pandas
+pyarrow
+pydantic>=2.11
+requests
+huggingface_hub
+pymupdf
+sentence-transformers>=5
+rank_bm25
+faiss-cpu
+psycopg[binary]>=3.3
+pgvector
+matplotlib
+tensorboard
+pytest

@@ -1,0 +1,10 @@
+# Receipt model: Qwen3.5-4B fine-tuning and inference (Linux or WSL2, NVIDIA GPU with 8 GB).
+# Install PyTorch first from the PyTorch index:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+# then:  pip install -r requirements.txt -r requirements-gpu.txt
+transformers>=5.23
+peft
+bitsandbytes>=0.45
+accelerate
+datasets
+flash-linear-attention   # Triton kernels for Qwen3.5's Gated DeltaNet layers (Linux only)

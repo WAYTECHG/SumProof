@@ -1,0 +1,15 @@
+# Environments and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+
+# Downloaded data and training runs (rebuild with the scripts; see README)
+data/
+runs/
+
+# Large or noisy result files (the summary JSONs stay in git)
+results/*_predictions.jsonl
+results/*.parquet
+results/*.log
