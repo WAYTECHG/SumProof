@@ -71,7 +71,7 @@ function FieldInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="not printed"
-        className={`tabular h-9 w-full rounded-lg border bg-surface-solid px-2.5 text-[13.5px] text-ink placeholder:text-muted/60 focus:border-mocha focus:outline-none ${
+        className={`tabular h-9 w-full rounded-lg border bg-surface-solid px-2.5 text-[13.5px] text-ink placeholder:text-muted/60 focus:border-accent focus:outline-none ${
           differs ? "border-warn/60" : "border-line"
         }`}
       />
@@ -184,7 +184,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               <button
                 type="button"
                 onClick={() => setZoom((z) => !z)}
-                className="flex items-center gap-1.5 rounded-lg border border-line bg-surface-solid px-2.5 py-1.5 text-[12.5px] font-semibold text-ink hover:border-mocha"
+                className="flex items-center gap-1.5 rounded-lg border border-line bg-surface-solid px-2.5 py-1.5 text-[12.5px] font-semibold text-ink hover:border-accent"
               >
                 {zoom ? <ZoomOut size={14} /> : <ZoomIn size={14} />} {zoom ? "Fit" : "Zoom"}
               </button>
@@ -208,16 +208,16 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               {record.candidates.map((c, k) => (
                 <li
                   key={k}
-                  className={`flex items-center gap-3 rounded-xl border px-3 py-2 text-[13px] ${c.chosen ? "border-mocha bg-sunken" : "border-line bg-surface-solid"}`}
+                  className={`flex items-center gap-3 rounded-xl border px-3 py-2 text-[13px] ${c.chosen ? "border-accent bg-sunken" : "border-line bg-surface-solid"}`}
                 >
                   <span className="w-24 shrink-0 font-semibold text-ink">{k === 0 ? "Greedy" : `Sample ${k}`}</span>
                   <div className="h-2 flex-1 overflow-hidden rounded-full bg-line" aria-hidden>
-                    <div className="mocha-grad h-full rounded-full" style={{ width: `${Math.round((c.consistency ?? 0) * 100)}%` }} />
+                    <div className="accent-grad h-full rounded-full" style={{ width: `${Math.round((c.consistency ?? 0) * 100)}%` }} />
                   </div>
                   <span className="tabular w-24 shrink-0 text-right text-muted">
                     {c.valid ? `${Math.round((c.consistency ?? 0) * 100)}% rules` : "invalid JSON"}
                   </span>
-                  <span className="w-16 shrink-0 text-right">{c.chosen && <Pill tone="mocha">picked</Pill>}</span>
+                  <span className="w-16 shrink-0 text-right">{c.chosen && <Pill tone="accent">picked</Pill>}</span>
                 </li>
               ))}
             </ul>
@@ -232,7 +232,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
                 <button
                   type="button"
                   onClick={() => switchSource(source)}
-                  className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12.5px] font-semibold text-mocha-deep hover:underline"
+                  className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12.5px] font-semibold text-accent-deep hover:underline"
                 >
                   <RotateCcw size={14} /> Reset edits
                 </button>
@@ -243,7 +243,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               <Segmented label="Reading to show" options={SOURCES} value={source} onChange={switchSource} />
               {source !== "label" && (
                 <label className="flex items-center gap-2 text-[13px] text-muted">
-                  <input type="checkbox" checked={showDiff} onChange={(e) => setShowDiff(e.target.checked)} className="accent-[var(--mocha)]" />
+                  <input type="checkbox" checked={showDiff} onChange={(e) => setShowDiff(e.target.checked)} className="accent-[var(--accent)]" />
                   Mark differences from the human label
                 </label>
               )}
@@ -281,7 +281,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
                                   (r.items ??= [])[i] = { ...r.items![i], [c.key]: e.target.value };
                                 })
                               }
-                              className={`tabular h-8 w-full rounded-md border bg-transparent px-2 text-[13.5px] text-ink focus:border-mocha focus:outline-none ${
+                              className={`tabular h-8 w-full rounded-md border bg-transparent px-2 text-[13.5px] text-ink focus:border-accent focus:outline-none ${
                                 differs ? "border-warn/60 bg-warn-soft/40" : "border-transparent hover:border-line"
                               }`}
                             />
@@ -313,7 +313,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
             <button
               type="button"
               onClick={() => update((r) => void (r.items ??= []).push({ name: "", qty: "", unit_price: "", amount: "" }))}
-              className="mt-2 flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-semibold text-mocha-deep hover:underline"
+              className="mt-2 flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-semibold text-accent-deep hover:underline"
             >
               <Plus size={15} /> Add line
             </button>

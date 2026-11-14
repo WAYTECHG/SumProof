@@ -54,7 +54,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
               type="button"
               onClick={() => choose(q.i)}
               className={`rounded-full border px-3 py-1 text-[12px] font-semibold transition ${
-                q.i === qi ? "border-ink bg-ink text-bg" : "border-line bg-surface-solid text-ink hover:border-mocha"
+                q.i === qi ? "border-ink bg-ink text-bg" : "border-line bg-surface-solid text-ink hover:border-accent"
               }`}
               title={q.question}
             >
@@ -75,7 +75,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
             return (
               <section
                 key={m.key}
-                className={`min-w-0 rounded-[22px] border p-4 shadow-card ${final ? "border-mocha bg-surface-solid" : "border-line bg-surface-solid"}`}
+                className={`min-w-0 rounded-[22px] border p-4 shadow-card ${final ? "border-accent bg-surface-solid" : "border-line bg-surface-solid"}`}
               >
                 <p className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">{m.note}</p>
                 <h2 className="mt-0.5 text-[15px] font-bold text-ink">{m.label}</h2>
@@ -98,7 +98,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
                       <li key={h.row}>
                         <Link
                           href={`/search/?q=${qi}`}
-                          className={`flex items-start gap-2 rounded-xl border px-2.5 py-2 text-[12.5px] transition hover:border-mocha ${
+                          className={`flex items-start gap-2 rounded-xl border px-2.5 py-2 text-[12.5px] transition hover:border-accent ${
                             h.gold ? "border-good/50 bg-good-soft" : "border-line bg-surface-solid"
                           }`}
                           title={p.text.slice(0, 300)}

@@ -26,7 +26,7 @@ export function BarBreakdown({
                 {format(b.value)}
               </span>
               <div
-                className={`w-full max-w-[86px] rounded-xl transition-all ${b.highlight ? "mocha-grad shadow-card" : "bg-line"}`}
+                className={`w-full max-w-[86px] rounded-xl transition-all ${b.highlight ? "accent-grad accent-glow" : "bg-ink/15"}`}
                 style={{ height: `${h}%` }}
               />
             </div>
@@ -68,8 +68,8 @@ export function TrainingCurve({
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[420px]" role="img" aria-label="Training loss over 165 optimizer steps, falling from 0.43 to about 0.02">
           <defs>
             <linearGradient id="lossFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--mocha)" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="var(--mocha)" stopOpacity="0" />
+              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
             </linearGradient>
           </defs>
           {ticks.map((t) => (
@@ -80,13 +80,13 @@ export function TrainingCurve({
               </text>
             </g>
           ))}
-          <line x1={x(epochStep)} x2={x(epochStep)} y1={pad.t} y2={y(0)} stroke="var(--mocha)" strokeDasharray="4 4" />
-          <text x={x(epochStep) + 6} y={pad.t + 12} fontSize="12" fill="var(--mocha-deep)" fontWeight="600">
+          <line x1={x(epochStep)} x2={x(epochStep)} y1={pad.t} y2={y(0)} stroke="var(--accent)" strokeDasharray="4 4" />
+          <text x={x(epochStep) + 6} y={pad.t + 12} fontSize="12" fill="var(--accent-deep)" fontWeight="600">
             end of epoch 1 · checkpoint used
           </text>
           <path d={line(log)} fill="none" stroke="var(--muted)" strokeOpacity="0.35" strokeWidth="1" />
           <path d={area} fill="url(#lossFill)" />
-          <path d={line(smooth)} fill="none" stroke="var(--mocha)" strokeWidth="2.5" strokeLinejoin="round" />
+          <path d={line(smooth)} fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinejoin="round" />
           {[1, 50, 100, 150].map((s) => (
             <text key={s} x={x(s)} y={H - pad.b + 18} textAnchor="middle" fontSize="12" fill="var(--muted)">
               {s}
@@ -101,7 +101,7 @@ export function TrainingCurve({
         <span className="text-muted">Validation field F1 (30 receipts):</span>
         {val.map((v) => (
           <span key={v.epoch} className="tabular rounded-full border border-line bg-surface-solid px-2.5 py-1 font-semibold text-ink">
-            epoch {v.epoch}: <span className="text-mocha-deep">{v.field_f1.toFixed(2)}</span>
+            epoch {v.epoch}: <span className="text-accent-deep">{v.field_f1.toFixed(2)}</span>
           </span>
         ))}
       </div>

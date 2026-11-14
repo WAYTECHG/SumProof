@@ -20,11 +20,11 @@ function Steps({ steps }: { steps: string[][] }) {
     <ol className="flex flex-col gap-2.5">
       {steps.map(([title, text, file], k) => (
         <li key={title} className="flex gap-3 rounded-2xl border border-line bg-surface-solid p-3.5">
-          <span className="mocha-grad grid h-7 w-7 shrink-0 place-items-center rounded-full text-[13px] font-bold text-white">{k + 1}</span>
+          <span className="accent-grad grid h-7 w-7 shrink-0 place-items-center rounded-full text-[13px] font-bold text-white">{k + 1}</span>
           <div className="min-w-0">
             <p className="text-[14px] font-bold text-ink">{title}</p>
             <p className="mt-0.5 text-[13.5px] leading-relaxed text-muted">{text}</p>
-            <code className="mt-1.5 inline-block rounded-md bg-sunken px-1.5 py-0.5 font-mono text-[11.5px] text-mocha-deep">{file}</code>
+            <code className="mt-1.5 inline-block rounded-md bg-sunken px-1.5 py-0.5 font-mono text-[11.5px] text-accent-deep">{file}</code>
           </div>
         </li>
       ))}

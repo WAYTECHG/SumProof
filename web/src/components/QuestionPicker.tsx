@@ -43,9 +43,9 @@ export function QuestionPicker({
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-haspopup="listbox"
-          className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-line bg-surface-solid px-4 py-3 text-left shadow-card hover:border-mocha"
+          className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-line bg-surface-solid px-4 py-3 text-left shadow-card hover:border-accent"
         >
-          <Search size={18} className="shrink-0 text-mocha" />
+          <Search size={18} className="shrink-0 text-accent" />
           <span className="min-w-0 flex-1">
             <span className="block text-[11.5px] font-semibold tracking-wide text-muted uppercase">
               Question {pos + 1} of {questions.length} · {current?.company}
@@ -54,10 +54,10 @@ export function QuestionPicker({
           </span>
           <ChevronDown size={18} className="shrink-0 text-muted" />
         </button>
-        <button type="button" aria-label="Previous question" onClick={() => step(-1)} className="grid w-11 place-items-center rounded-2xl border border-line bg-surface-solid text-ink shadow-card hover:border-mocha">
+        <button type="button" aria-label="Previous question" onClick={() => step(-1)} className="grid w-11 place-items-center rounded-2xl border border-line bg-surface-solid text-ink shadow-card hover:border-accent">
           <ChevronLeft size={18} />
         </button>
-        <button type="button" aria-label="Next question" onClick={() => step(1)} className="grid w-11 place-items-center rounded-2xl border border-line bg-surface-solid text-ink shadow-card hover:border-mocha">
+        <button type="button" aria-label="Next question" onClick={() => step(1)} className="grid w-11 place-items-center rounded-2xl border border-line bg-surface-solid text-ink shadow-card hover:border-accent">
           <ChevronRight size={18} />
         </button>
       </div>
@@ -74,7 +74,7 @@ export function QuestionPicker({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Filter by company or words, e.g. 3M capex"
-                className="h-9 w-full rounded-lg border border-line bg-sunken pr-3 pl-8 text-[13.5px] text-ink focus:border-mocha focus:outline-none"
+                className="h-9 w-full rounded-lg border border-line bg-sunken pr-3 pl-8 text-[13.5px] text-ink focus:border-accent focus:outline-none"
               />
             </label>
             <select

@@ -117,7 +117,7 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Item name or #id"
-              className="h-10 w-full rounded-xl border border-line bg-surface-solid pr-3 pl-9 text-[13.5px] text-ink focus:border-mocha focus:outline-none"
+              className="h-10 w-full rounded-xl border border-line bg-surface-solid pr-3 pl-9 text-[13.5px] text-ink focus:border-accent focus:outline-none"
             />
           </label>
         </div>
@@ -143,7 +143,7 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
                 return (
                   <tr key={x.r.id} className="border-b border-line transition-colors last:border-0 hover:bg-sunken">
                     <td className="px-3 py-2">
-                      <Link href={href} className="flex items-center gap-3 font-semibold text-ink hover:text-mocha-deep">
+                      <Link href={href} className="flex items-center gap-3 font-semibold text-ink hover:text-accent-deep">
                         <img src={`/data/${x.r.image}`} alt="" loading="lazy" className="h-12 w-9 rounded-md border border-line object-cover object-top" />
                         #{x.r.id}
                       </Link>

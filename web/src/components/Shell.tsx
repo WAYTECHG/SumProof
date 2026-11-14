@@ -42,9 +42,9 @@ function isActive(path: string, href: string) {
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5 px-2">
-      <span className="mocha-grad grid h-9 w-9 place-items-center rounded-xl text-[15px] font-extrabold text-white shadow-card">Σ</span>
+      <span className="accent-grad accent-glow grid h-9 w-9 place-items-center rounded-xl text-[15px] font-extrabold text-white">Σ</span>
       <span className="text-[19px] font-extrabold tracking-tight text-ink">
-        Sum<span className="text-mocha">Proof</span>
+        Sum<span className="text-accent">Proof</span>
       </span>
     </Link>
   );
@@ -62,10 +62,10 @@ function NavList({ items, path, onNavigate }: { items: typeof MAIN; path: string
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14.5px] font-medium transition-colors ${
-                active ? "bg-surface-solid text-mocha-deep shadow-card" : "text-ink hover:bg-surface-solid/60 hover:text-ink"
+                active ? "accent-grad accent-glow font-semibold text-white" : "text-ink hover:bg-surface-solid/60 hover:text-ink"
               }`}
             >
-              <Icon size={19} strokeWidth={1.8} className={active ? "text-mocha" : "text-muted"} />
+              <Icon size={19} strokeWidth={1.8} className={active ? "text-white" : "text-muted"} />
               {label}
             </Link>
           </li>
@@ -101,7 +101,7 @@ function Sidebar({ path, onNavigate }: { path: string; onNavigate?: () => void }
         <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
           Real outputs from the evaluation runs. Live mode runs the models on a local GPU.
         </p>
-        <span className="mocha-grad mt-3 inline-block rounded-xl px-3 py-1.5 text-[12px] font-semibold text-white">
+        <span className="accent-grad accent-glow mt-3 inline-block rounded-xl px-3 py-1.5 text-[12px] font-semibold text-white">
           $0 · open models
         </span>
       </div>
@@ -125,7 +125,7 @@ function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-      className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface-solid text-ink shadow-card hover:text-mocha"
+      className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface-solid text-ink shadow-card hover:text-accent"
     >
       {dark ? <Sun size={18} /> : <Moon size={18} />}
     </button>
@@ -174,7 +174,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </button>
             <QuickJump />
             <div className="ml-auto flex items-center gap-2.5">
-              <span className="hidden rounded-full border border-line bg-surface-solid px-3 py-1.5 text-[12.5px] font-semibold text-mocha-deep md:inline">
+              <span className="hidden rounded-full border border-line bg-surface-solid px-3 py-1.5 text-[12.5px] font-semibold text-accent-deep md:inline">
                 Explorer mode · real results
               </span>
               <ThemeToggle />
@@ -183,7 +183,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Source code on GitHub"
-                className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface-solid text-ink shadow-card hover:text-mocha"
+                className="grid h-10 w-10 place-items-center rounded-full border border-line bg-surface-solid text-ink shadow-card hover:text-accent"
               >
                 <Github size={18} />
               </a>

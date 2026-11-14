@@ -83,7 +83,7 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
                 type="button"
                 onClick={() => setShowAnswer((s) => !s)}
                 aria-expanded={showAnswer}
-                className="flex items-center gap-2 text-[13.5px] font-semibold text-mocha-deep"
+                className="flex items-center gap-2 text-[13.5px] font-semibold text-accent-deep"
               >
                 <MessageSquareQuote size={16} /> {showAnswer ? "Hide" : "Show"} the analysts&apos; reference answer
               </button>
@@ -126,11 +126,11 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
                         onClick={() => setSelected(h.row)}
                         aria-pressed={active}
                         className={`w-full rounded-2xl border p-3.5 text-left transition ${
-                          active ? "border-mocha bg-sunken shadow-card" : "border-line bg-surface-solid hover:border-mocha/60"
+                          active ? "border-accent bg-sunken shadow-card" : "border-line bg-surface-solid hover:border-accent/60"
                         }`}
                       >
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="mocha-grad grid h-6 w-6 place-items-center rounded-full text-[12px] font-bold text-white">{k + 1}</span>
+                          <span className="accent-grad grid h-6 w-6 place-items-center rounded-full text-[12px] font-bold text-white">{k + 1}</span>
                           <span className="text-[13.5px] font-bold text-ink">{prettyDoc(p.doc)}</span>
                           <span className="text-[12.5px] text-muted">page {p.page + 1}</span>
                           {h.gold && (
@@ -170,7 +170,7 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
                   <div className="mt-3 flex flex-wrap items-center gap-3 text-[12.5px] text-muted">
                     <span>Text extracted with PyMuPDF; highlights are words from the question.</span>
                     {summary && detail.doc_link && page.doc === detail.gold[0]?.doc && (
-                      <a href={`${detail.doc_link}#page=${page.page + 1}`} target="_blank" rel="noreferrer" className="ml-auto flex items-center gap-1 font-semibold text-mocha-deep hover:underline">
+                      <a href={`${detail.doc_link}#page=${page.page + 1}`} target="_blank" rel="noreferrer" className="ml-auto flex items-center gap-1 font-semibold text-accent-deep hover:underline">
                         Open original filing <ExternalLink size={13} />
                       </a>
                     )}

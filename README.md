@@ -79,7 +79,7 @@ Solid boxes run for every request; dashed boxes are offline steps that run once.
 
 ## Interface
 
-A Next.js + TypeScript explorer of the real results ([`web/`](web/)): a receipt checker where you can edit any field and watch the accounting rules recheck live, a review queue with CSV export, filing search with a page viewer, and a side-by-side comparison of the five retrieval steps. Light and dark mocha themes; works on phones.
+A Next.js + TypeScript explorer of the real results ([`web/`](web/)): a receipt checker where you can edit any field and watch the accounting rules recheck live, a review queue with CSV export, filing search with a page viewer, and a side-by-side comparison of the five retrieval steps. Light and dark themes (orange accent, lime-to-orange banners); works on phones.
 
 ![SumProof interface: overview](docs/interface-overview.png)
 

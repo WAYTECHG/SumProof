@@ -20,7 +20,7 @@ export function Card({
     <section className={`min-w-0 rounded-[22px] border border-line bg-surface-solid p-4 shadow-card sm:p-5 ${className}`}>
       {(title || action) && (
         <div className="mb-3.5 flex items-center gap-2.5">
-          {icon && <span className="text-mocha">{icon}</span>}
+          {icon && <span className="text-accent">{icon}</span>}
           {title && <h2 className="text-[16px] font-bold text-ink">{title}</h2>}
           {action && <div className="ml-auto flex items-center gap-2">{action}</div>}
         </div>
@@ -79,7 +79,7 @@ const PILL_TONES = {
   good: "bg-good-soft text-good",
   warn: "bg-warn-soft text-warn",
   info: "bg-info-soft text-info",
-  mocha: "mocha-grad text-white",
+  accent: "accent-grad text-white",
 } as const;
 
 export function Pill({ tone = "light", children, className = "" }: { tone?: keyof typeof PILL_TONES; children: React.ReactNode; className?: string }) {
@@ -97,7 +97,7 @@ export function Stat({ label, before, after, note }: { label: string; before: st
       <p className="tabular mt-2 flex items-baseline gap-2 text-ink">
         <span className="text-[17px] text-muted line-through decoration-1">{before}</span>
         <span className="text-[13px] text-muted">→</span>
-        <span className="text-[30px] leading-none font-extrabold text-mocha-deep">{after}</span>
+        <span className="text-[30px] leading-none font-extrabold text-accent-deep">{after}</span>
       </p>
       {note && <p className="mt-2 text-[12.5px] text-muted">{note}</p>}
     </div>
@@ -125,7 +125,7 @@ export function Segmented<T extends string>({
           aria-checked={value === o.value}
           onClick={() => onChange(o.value)}
           className={`rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors ${
-            value === o.value ? "bg-surface-solid text-mocha-deep shadow-card" : "text-muted hover:text-ink"
+            value === o.value ? "bg-surface-solid text-accent-deep shadow-card" : "text-muted hover:text-ink"
           }`}
         >
           {o.label}
@@ -145,15 +145,15 @@ export function Button({
 }: {
   children: React.ReactNode;
   onClick?: () => void;
-  tone?: "dark" | "light" | "mocha";
+  tone?: "dark" | "light" | "accent";
   href?: string;
   disabled?: boolean;
   className?: string;
 }) {
   const styles = {
     dark: "bg-ink text-bg hover:opacity-90",
-    light: "bg-surface-solid text-ink border border-line hover:border-mocha",
-    mocha: "mocha-grad text-white hover:opacity-95",
+    light: "bg-surface-solid text-ink border border-line hover:border-accent",
+    accent: "accent-grad accent-glow text-white hover:opacity-95",
   }[tone];
   const cls = `inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[14px] font-semibold shadow-card transition disabled:opacity-50 ${styles} ${className}`;
   if (href) {

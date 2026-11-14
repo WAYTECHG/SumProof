@@ -105,7 +105,7 @@ export function QuickJump() {
         role="combobox"
         aria-expanded={open && results.length > 0}
         aria-controls="quick-jump-list"
-        className="h-10 w-full min-w-0 rounded-xl border border-line bg-surface-solid pr-3 pl-10 sm:pr-14 text-[14px] text-ink shadow-card placeholder:text-muted focus:border-mocha focus:outline-none"
+        className="h-10 w-full min-w-0 rounded-xl border border-line bg-surface-solid pr-3 pl-10 sm:pr-14 text-[14px] text-ink shadow-card placeholder:text-muted focus:border-accent focus:outline-none"
       />
       <kbd className="pointer-events-none absolute top-1/2 right-3 hidden -translate-y-1/2 rounded-md border border-line px-1.5 py-0.5 font-mono text-[11px] text-muted sm:block">
         Ctrl K
@@ -120,7 +120,7 @@ export function QuickJump() {
                 onClick={() => go(r)}
                 className={`flex w-full items-start gap-3 px-4 py-2.5 text-left ${i === active ? "bg-sunken" : ""}`}
               >
-                {r.kind === "receipt" ? <ReceiptText size={16} className="mt-0.5 shrink-0 text-mocha" /> : <FileSearch size={16} className="mt-0.5 shrink-0 text-mocha" />}
+                {r.kind === "receipt" ? <ReceiptText size={16} className="mt-0.5 shrink-0 text-accent" /> : <FileSearch size={16} className="mt-0.5 shrink-0 text-accent" />}
                 <span className="min-w-0">
                   <span className="line-clamp-2 block text-[13.5px] font-semibold text-ink">{r.label}</span>
                   <span className="block text-[12px] text-muted">{r.sub}</span>

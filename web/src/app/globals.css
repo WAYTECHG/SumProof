@@ -3,58 +3,60 @@
 /* Dark mode follows a class on <html>, set by the theme toggle (and the OS on first visit). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* SumProof design tokens: mocha with caramel and rose accents.
-   Tuned for contrast: opaque white cards, deep espresso text (~16:1), muted text ~7:1. */
+/* SumProof design tokens: cool grey canvas, white cards, near-black text, vivid orange accent,
+   lime-to-orange banner, pink and teal watercolour blobs. Text contrast ~18:1, muted ~6.5:1. */
 :root {
-  --bg: #f4efea;
-  --surface: rgba(255, 255, 255, 0.94);
+  --bg: #e8e6eb;
+  --surface: rgba(246, 245, 248, 0.92);
   --surface-solid: #ffffff;
-  --sunken: #f6f0ea;
-  --ink: #1c120d;
-  --muted: #574740;
-  --line: #ded0c5;
-  --mocha: #9a6249;
-  --mocha-deep: #5c3523;
-  --caramel: #c97f3c;
-  --rose: #e8846f;
-  --sage: #6fa98d;
-  --good: #1f7a3c;
-  --good-soft: #dcf2e2;
-  --warn: #b23d0f;
-  --warn-soft: #fde3d6;
-  --info: #3c55a5;
-  --info-soft: #e2e8fb;
-  --banner: linear-gradient(110deg, #fde2c3 0%, #f8b98a 36%, #f39482 68%, #d6a8ec 100%);
-  --mocha-grad: linear-gradient(135deg, #ad7254 0%, #6e3f2a 100%);
-  --blob-a: rgba(243, 148, 130, 0.32);
-  --blob-b: rgba(111, 169, 141, 0.28);
-  --shadow: 0 1px 2px rgba(60, 35, 22, 0.08), 0 6px 20px rgba(60, 35, 22, 0.08);
+  --sunken: #f4f3f6;
+  --ink: #111114;
+  --muted: #5c5c66;
+  --line: #e4e3e8;
+  --accent: #f0500f;
+  --accent-deep: #c2410c;
+  --caramel: #f59e0b;
+  --rose: #f4728c;
+  --sage: #2dd4bf;
+  --good: #15803d;
+  --good-soft: #dcfce7;
+  --warn: #dc2626;
+  --warn-soft: #fee2e2;
+  --info: #4338ca;
+  --info-soft: #e0e7ff;
+  --banner: linear-gradient(100deg, #d9f99d 0%, #ecfc4c 30%, #fde047 55%, #fb923c 100%);
+  --accent-grad: linear-gradient(135deg, #ff7a3d 0%, #f04a0e 100%);
+  --accent-glow: 0 8px 24px rgba(240, 74, 14, 0.38);
+  --blob-a: rgba(244, 114, 140, 0.42);
+  --blob-b: rgba(45, 212, 191, 0.35);
+  --shadow: 0 1px 2px rgba(17, 17, 20, 0.05), 0 6px 20px rgba(17, 17, 20, 0.06);
 }
 
 .dark {
-  --bg: #0f0a08;
-  --surface: rgba(26, 19, 15, 0.94);
-  --surface-solid: #1b130f;
-  --sunken: #140e0b;
-  --ink: #fbf5f1;
-  --muted: #d0bdb2;
-  --line: #3f2f27;
-  --mocha: #e3a888;
-  --mocha-deep: #f6d2bd;
-  --caramel: #f0a868;
-  --rose: #f29a86;
-  --sage: #86c6a6;
-  --good: #8ee6a6;
-  --good-soft: #163522;
-  --warn: #ff9a6b;
-  --warn-soft: #3d1d10;
-  --info: #a9bdff;
-  --info-soft: #1d2647;
-  --banner: linear-gradient(110deg, #6b3b22 0%, #93512c 38%, #9a4436 70%, #5f3f7a 100%);
-  --mocha-grad: linear-gradient(135deg, #e3a888 0%, #a3654a 100%);
-  --blob-a: rgba(200, 95, 75, 0.22);
-  --blob-b: rgba(80, 150, 120, 0.18);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --bg: #0c0c0f;
+  --surface: rgba(22, 22, 27, 0.92);
+  --surface-solid: #17171c;
+  --sunken: #111116;
+  --ink: #f7f7f9;
+  --muted: #b4b4bf;
+  --line: #2a2a32;
+  --accent: #ff6a2c;
+  --accent-deep: #ff9b6b;
+  --caramel: #fbbf24;
+  --rose: #fb7f9a;
+  --sage: #5eead4;
+  --good: #4ade80;
+  --good-soft: #123020;
+  --warn: #f87171;
+  --warn-soft: #3a1414;
+  --info: #a5b4fc;
+  --info-soft: #1e1f4a;
+  --banner: linear-gradient(100deg, #3f5a12 0%, #5d6410 35%, #7a5a0c 62%, #9a3c0e 100%);
+  --accent-grad: linear-gradient(135deg, #ff7a3d 0%, #e5450b 100%);
+  --accent-glow: 0 8px 26px rgba(255, 106, 44, 0.32);
+  --blob-a: rgba(244, 114, 140, 0.2);
+  --blob-b: rgba(45, 212, 191, 0.16);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
 }
 
@@ -66,8 +68,8 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-mocha: var(--mocha);
-  --color-mocha-deep: var(--mocha-deep);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
   --color-caramel: var(--caramel);
   --color-rose: var(--rose);
   --color-sage: var(--sage);
@@ -128,8 +130,13 @@ body {
   background: var(--banner);
 }
 
-.mocha-grad {
-  background: var(--mocha-grad);
+.accent-grad {
+  background: var(--accent-grad);
+}
+
+/* Orange glow on primary call-to-action buttons, like the reference's CTA. */
+.accent-glow {
+  box-shadow: var(--accent-glow);
 }
 
 .tabular {
@@ -145,7 +152,7 @@ mark {
 }
 
 :focus-visible {
-  outline: 2px solid var(--mocha);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 

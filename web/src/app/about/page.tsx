@@ -29,7 +29,7 @@ export default function AboutPage() {
             <li>Hardware: one RTX 4060 laptop GPU (8 GB), Windows 11 with WSL2 Ubuntu. Cost: $0.</li>
             <li>
               Code and scripts that reproduce every number:{" "}
-              <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="font-semibold text-mocha-deep hover:underline">
+              <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="font-semibold text-accent-deep hover:underline">
                 github.com/WAYTECHG/SumProof
               </a>
             </li>
