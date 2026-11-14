@@ -168,6 +168,7 @@ def main() -> None:
 
     runs = {name: [] for name in ("1_bm25", "2_dense", "3_hybrid_rrf", "4_dense_routed", "5_dense_routed_reranked")}
     routed_ok, candidates_for_rerank = 0, []
+    rankings = []  # per-question top 10 of every method, for the web interface and error analysis
     for i, question in enumerate(q.question):
         bm = bm25.get_scores(tokenize(question))
         bm_rank = [int(j) for j in np.argsort(-bm)[:200]]
@@ -186,6 +187,8 @@ def main() -> None:
         for name, ranked in (("1_bm25", bm_rank), ("2_dense", dn_rank), ("3_hybrid_rrf", hy), ("4_dense_routed", routed)):
             runs[name].append(score(ranked, golds[i]))
         candidates_for_rerank.append(routed[:RERANK_TOP])
+        rankings.append({"i": i, "routed_filings": allowed, "gold_rows": sorted(golds[i]),
+                         "bm25": bm_rank[:10], "dense": dn_rank[:10], "hybrid": hy[:10], "routed": routed[:10]})
 
     # Step 5: rerank the top routed pages with a cross-encoder.
     from sentence_transformers import CrossEncoder
@@ -196,8 +199,11 @@ def main() -> None:
     for i, question in enumerate(q.question):
         cand = candidates_for_rerank[i]
         s = reranker.predict([(question, pages.text.iloc[j]) for j in cand], batch_size=4)
-        reranked = [cand[j] for j in np.argsort(-np.asarray(s))]
+        order = np.argsort(-np.asarray(s))
+        reranked = [cand[j] for j in order]
         runs["5_dense_routed_reranked"].append(score(reranked, golds[i]))
+        rankings[i]["reranked"] = reranked[:10]
+        rankings[i]["reranker_scores"] = [round(float(s[j]), 3) for j in order[:10]]
     print(f"reranked 150 x {RERANK_TOP} pages in {time.time() - t0:.0f}s")
 
     table = {name: {m: round(float(np.mean([r[m] for r in rs])), 3) for m in rs[0]} for name, rs in runs.items()}
@@ -209,6 +215,7 @@ def main() -> None:
               "router_kept_right_filing": round(routed_ok / len(q), 3), "metrics": table, "recall@5_by_question_type": by_type}
     Path("results").mkdir(exist_ok=True)
     Path("results/financebench_retrieval.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
+    Path("results/financebench_rankings.json").write_text(json.dumps(rankings), encoding="utf-8")
 
     print(f"\n{len(q)} questions, {len(pages)} pages, {pages.doc_name.nunique()} filings | "
           f"routing kept the right filing for {routed_ok}/{len(q)} questions\n")

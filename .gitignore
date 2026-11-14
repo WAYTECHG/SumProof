@@ -5,9 +5,10 @@ __pycache__/
 .pytest_cache/
 .env
 
-# Downloaded data and training runs (rebuild with the scripts; see README)
-data/
-runs/
+# Downloaded data and training runs (rebuild with the scripts; see README).
+# Anchored to the repo root: web/public/data (the interface's exported data) must stay in git.
+/data/
+/runs/
 
 # Large or noisy result files (the summary JSONs stay in git)
 results/*_predictions.jsonl

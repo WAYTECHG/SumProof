@@ -7,6 +7,32 @@
 - **Financial retrieval:** search over **12,013 pages of 84 real SEC filings** (FinanceBench), scored against evidence pages labelled by financial analysts. Qwen3-Embedding + company/year routing + Qwen3-Reranker: **Recall@5 0.53 → 0.71**.
 - **Vector storage:** FAISS and PostgreSQL + pgvector (with the routing as a SQL filter), verified to return identical results.
 
+## Architecture
+
+![SumProof architecture: receipt reader (A) and financial filing search (B)](docs/architecture.svg)
+
+Solid boxes run for every request; dashed boxes are offline steps that run once.
+
+**A. Receipt reader** (`sumproof/receipts/`)
+1. **Read:** the photo goes straight into Qwen3.5-4B, a vision-language model. Its vision encoder turns the image into up to ~800 image tokens and the language model writes the receipt as JSON. There is no separate OCR step (`vlm.py`).
+2. **Sample:** besides the normal (greedy) reading, the model samples 4 more, giving 5 candidates (`vlm.generate`).
+3. **Check:** each candidate is tested against the receipt's arithmetic. The checker keeps the one that passes the most rules; if even that one breaks a rule, the receipt goes to human review (`consistency.py`).
+4. **Fine-tune (offline):** QLoRA trains a small LoRA adapter (0.67% of the weights) on 800 real CORD receipts while the 4-bit base model stays frozen; the adapter plugs into the language model at inference (`train_qlora.py`).
+
+**B. Financial filing search** (`sumproof/rag/`)
+1. **Index (offline):** the 84 filings are split into 12,013 pages and each page is embedded with Qwen3-Embedding into a 1024-number vector (`download_financebench.py`, `financebench.py`).
+2. **Route:** the question's company (name, ticker or nickname) and fiscal year select the matching filings (`financebench.build_router`).
+3. **Search:** the question is embedded the same way, and exact vector search finds the closest pages among the routed filings, in FAISS (`index.py`) or in PostgreSQL with pgvector, where routing is a SQL `WHERE` clause (`pgstore.py`).
+4. **Rerank:** Qwen3-Reranker reads the question and each of the top 30 pages together and reorders them; the output is the evidence pages with their page numbers.
+
+## Interface
+
+A Next.js + TypeScript explorer of the real results ([`web/`](web/)): a receipt checker where you can edit any field and watch the accounting rules recheck live, a review queue with CSV export, filing search with a page viewer, and a side-by-side comparison of the five retrieval steps. Light and dark mocha themes; works on phones.
+
+![SumProof interface: overview](docs/interface-overview.png)
+
+![SumProof interface: receipt checker](docs/interface-checker.png)
+
 ## Results
 
 ### Receipt extraction: CORD-v2 test set (100 real receipts)
@@ -91,6 +117,7 @@ sumproof/rag/        download_financebench, financebench (router + five-step eva
 scripts/             setup_wsl.sh, setup_pgvector.sh, run_receipts.sh, wsl.sh
 results/             summary JSON for every number in this README
 tests/               receipts (parsing, checker, metrics) and retrieval (router, fusion, FAISS, metrics)
+web/                 Next.js + TypeScript interface (see web/README.md); data from `python -m sumproof.export_web`
 ```
 
 ## Engineering notes

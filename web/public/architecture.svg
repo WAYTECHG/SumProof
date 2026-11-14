@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 830" width="1100" height="830" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <title>SumProof architecture: receipt reader and financial filing search</title>
+  <defs>
+    <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0e6b63"/></marker>
+    <marker id="arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3b4a9c"/></marker>
+    <marker id="arG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a8a86"/></marker>
+    <marker id="arOk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f7a3b"/></marker>
+    <marker id="arRev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a8462c"/></marker>
+  </defs>
+
+  <!-- card -->
+  <rect width="1100" height="830" rx="18" fill="#ffffff"/>
+  <text x="40" y="48" font-size="26" font-weight="700" fill="#1b2422">SumProof architecture</text>
+  <text x="40" y="74" font-size="15" fill="#5b6763">Two pipelines on real financial documents · open models · one 8 GB laptop GPU · $0</text>
+
+  <!-- ================= LANE A: RECEIPT READER ================= -->
+  <rect x="20" y="92" width="1060" height="340" rx="14" fill="#eef6f4" stroke="#b9dcd4"/>
+  <text x="40" y="120" font-size="13" font-weight="700" letter-spacing="1.5" fill="#0e6b63">A · RECEIPT READER</text>
+  <text x="1060" y="120" font-size="13" fill="#5b6763" text-anchor="end">receipt photo → checked JSON</text>
+
+  <!-- photo -->
+  <rect x="40" y="160" width="130" height="90" rx="10" fill="#ffffff" stroke="#0e6b63" stroke-width="1.5"/>
+  <text x="105" y="199" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">Receipt photo</text>
+  <text x="105" y="221" font-size="12.5" fill="#5b6763" text-anchor="middle">JPEG / PNG</text>
+  <line x1="170" y1="205" x2="198" y2="205" stroke="#0e6b63" stroke-width="2" marker-end="url(#arA)"/>
+
+  <!-- VLM -->
+  <rect x="200" y="140" width="290" height="130" rx="12" fill="#ffffff" stroke="#0e6b63" stroke-width="2"/>
+  <text x="345" y="164" font-size="14" font-weight="700" fill="#1b2422" text-anchor="middle">Qwen3.5-4B · vision-language model</text>
+  <rect x="214" y="178" width="120" height="78" rx="8" fill="#e3f1ee"/>
+  <text x="274" y="203" font-size="13" font-weight="700" fill="#1b2422" text-anchor="middle">Vision encoder</text>
+  <text x="274" y="222" font-size="12.5" fill="#1b2422" text-anchor="middle">0.33B · bf16</text>
+  <text x="274" y="240" font-size="12.5" fill="#5b6763" text-anchor="middle">frozen</text>
+  <line x1="334" y1="217" x2="352" y2="217" stroke="#0e6b63" stroke-width="2" marker-end="url(#arA)"/>
+  <rect x="354" y="178" width="122" height="78" rx="8" fill="#e3f1ee"/>
+  <text x="415" y="203" font-size="13" font-weight="700" fill="#1b2422" text-anchor="middle">Language model</text>
+  <text x="415" y="222" font-size="12.5" fill="#1b2422" text-anchor="middle">4.2B · 4-bit NF4</text>
+  <text x="415" y="240" font-size="12.5" font-weight="700" fill="#0e6b63" text-anchor="middle">+ LoRA adapter</text>
+  <line x1="490" y1="205" x2="518" y2="205" stroke="#0e6b63" stroke-width="2" marker-end="url(#arA)"/>
+
+  <!-- candidates -->
+  <rect x="520" y="160" width="150" height="90" rx="10" fill="#ffffff" stroke="#0e6b63" stroke-width="1.5"/>
+  <text x="595" y="192" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">5 candidate</text>
+  <text x="595" y="211" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">readings (JSON)</text>
+  <text x="595" y="233" font-size="12.5" fill="#5b6763" text-anchor="middle">1 greedy + 4 sampled</text>
+  <line x1="670" y1="205" x2="698" y2="205" stroke="#0e6b63" stroke-width="2" marker-end="url(#arA)"/>
+
+  <!-- checker -->
+  <rect x="700" y="140" width="200" height="130" rx="12" fill="#ffffff" stroke="#0e6b63" stroke-width="2"/>
+  <text x="800" y="166" font-size="15" font-weight="700" fill="#1b2422" text-anchor="middle">Accounting checker</text>
+  <g font-size="12.5" fill="#1b2422">
+    <text x="716" y="191">items sum = subtotal</text>
+    <text x="716" y="210">sub − disc + tax = total</text>
+    <text x="716" y="229">cash − change = total</text>
+    <text x="716" y="248">card charge = total</text>
+  </g>
+  <text x="700" y="292" font-size="12.5" fill="#5b6763">Keeps the reading that passes the most rules</text>
+
+  <!-- outputs -->
+  <line x1="900" y1="188" x2="928" y2="174" stroke="#2f7a3b" stroke-width="2" marker-end="url(#arOk)"/>
+  <rect x="930" y="144" width="140" height="56" rx="10" fill="#e6f4ea" stroke="#2f7a3b" stroke-width="1.5"/>
+  <text x="1000" y="168" font-size="15" font-weight="700" fill="#2f7a3b" text-anchor="middle">✓ Accepted</text>
+  <text x="1000" y="188" font-size="12.5" fill="#1b2422" text-anchor="middle">all rules pass</text>
+  <line x1="900" y1="224" x2="928" y2="238" stroke="#a8462c" stroke-width="2" marker-end="url(#arRev)"/>
+  <rect x="930" y="212" width="140" height="56" rx="10" fill="#fdf0e3" stroke="#b5651d" stroke-width="1.5"/>
+  <text x="1000" y="236" font-size="15" font-weight="700" fill="#a8462c" text-anchor="middle">Human review</text>
+  <text x="1000" y="256" font-size="12.5" fill="#1b2422" text-anchor="middle">a rule failed</text>
+
+  <!-- offline fine-tuning -->
+  <text x="40" y="318" font-size="12" font-weight="700" letter-spacing="1.2" fill="#5b6763">OFFLINE · FINE-TUNING (WSL2 UBUNTU)</text>
+  <rect x="40" y="330" width="190" height="80" rx="10" fill="#fbfcfb" stroke="#7a8a86" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="135" y="363" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">CORD-v2</text>
+  <text x="135" y="384" font-size="12.5" fill="#5b6763" text-anchor="middle">800 real receipts</text>
+  <line x1="230" y1="370" x2="258" y2="370" stroke="#7a8a86" stroke-width="2" marker-end="url(#arG)"/>
+  <rect x="260" y="330" width="250" height="80" rx="10" fill="#fbfcfb" stroke="#7a8a86" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="385" y="356" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">QLoRA fine-tuning</text>
+  <text x="385" y="376" font-size="12.5" fill="#1b2422" text-anchor="middle">PEFT + bitsandbytes</text>
+  <text x="385" y="395" font-size="12.5" fill="#5b6763" text-anchor="middle">loss on answer tokens only</text>
+  <line x1="510" y1="370" x2="538" y2="370" stroke="#7a8a86" stroke-width="2" marker-end="url(#arG)"/>
+  <rect x="540" y="330" width="150" height="80" rx="10" fill="#fbfcfb" stroke="#7a8a86" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="615" y="363" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">LoRA adapter</text>
+  <text x="615" y="384" font-size="12.5" fill="#5b6763" text-anchor="middle">30.5M params (0.67%)</text>
+  <path d="M615,330 V302 H415 V272" fill="none" stroke="#0e6b63" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arA)"/>
+  <text x="515" y="296" font-size="11.5" fill="#0e6b63" text-anchor="middle">plugs into the language model</text>
+
+  <!-- receipt metrics -->
+  <rect x="720" y="330" width="350" height="34" rx="17" fill="#0e6b63"/>
+  <text x="895" y="352" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">Field F1  0.79 → 0.94</text>
+  <rect x="720" y="372" width="350" height="34" rx="17" fill="#e3f1ee" stroke="#0e6b63"/>
+  <text x="895" y="394" font-size="14" font-weight="700" fill="#0e6b63" text-anchor="middle">Fully correct receipts  6 → 62 / 100</text>
+
+  <!-- ================= LANE B: FINANCIAL FILING SEARCH ================= -->
+  <rect x="20" y="450" width="1060" height="318" rx="14" fill="#eef0f8" stroke="#c3c8e6"/>
+  <text x="40" y="478" font-size="13" font-weight="700" letter-spacing="1.5" fill="#3b4a9c">B · FINANCIAL FILING SEARCH (RAG RETRIEVAL)</text>
+  <text x="1060" y="478" font-size="13" fill="#5b6763" text-anchor="end">question → evidence pages</text>
+
+  <!-- query path -->
+  <rect x="40" y="498" width="160" height="90" rx="10" fill="#ffffff" stroke="#3b4a9c" stroke-width="1.5"/>
+  <text x="120" y="528" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">Analyst question</text>
+  <text x="120" y="550" font-size="12.5" fill="#5b6763" text-anchor="middle">"What was 3M's</text>
+  <text x="120" y="568" font-size="12.5" fill="#5b6763" text-anchor="middle">FY2018 capex?"</text>
+  <line x1="200" y1="543" x2="223" y2="543" stroke="#3b4a9c" stroke-width="2" marker-end="url(#arB)"/>
+
+  <rect x="225" y="498" width="185" height="90" rx="10" fill="#ffffff" stroke="#3b4a9c" stroke-width="1.5"/>
+  <text x="317" y="526" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">Filing router</text>
+  <text x="317" y="547" font-size="12.5" fill="#1b2422" text-anchor="middle">company: name / ticker</text>
+  <text x="317" y="566" font-size="12.5" fill="#1b2422" text-anchor="middle">+ fiscal year → filings</text>
+  <line x1="410" y1="543" x2="433" y2="543" stroke="#3b4a9c" stroke-width="2" marker-end="url(#arB)"/>
+
+  <rect x="435" y="498" width="170" height="90" rx="10" fill="#ffffff" stroke="#3b4a9c" stroke-width="1.5"/>
+  <text x="520" y="526" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">Qwen3-Embedding</text>
+  <text x="520" y="547" font-size="12.5" fill="#1b2422" text-anchor="middle">0.6B</text>
+  <text x="520" y="566" font-size="12.5" fill="#5b6763" text-anchor="middle">question → 1024-d</text>
+  <line x1="605" y1="543" x2="633" y2="543" stroke="#3b4a9c" stroke-width="2" marker-end="url(#arB)"/>
+
+  <!-- vector store -->
+  <rect x="635" y="498" width="210" height="190" rx="12" fill="#ffffff" stroke="#3b4a9c" stroke-width="2"/>
+  <text x="740" y="522" font-size="15" font-weight="700" fill="#1b2422" text-anchor="middle">Vector search (exact)</text>
+  <rect x="649" y="536" width="182" height="58" rx="8" fill="#e6e9f6"/>
+  <text x="740" y="560" font-size="13.5" font-weight="700" fill="#1b2422" text-anchor="middle">FAISS · IndexFlatIP</text>
+  <text x="740" y="579" font-size="12" fill="#5b6763" text-anchor="middle">in memory, ID filter</text>
+  <rect x="649" y="604" width="182" height="70" rx="8" fill="#e6e9f6"/>
+  <text x="740" y="626" font-size="13.5" font-weight="700" fill="#1b2422" text-anchor="middle">PostgreSQL + pgvector</text>
+  <text x="740" y="645" font-size="12" fill="#3b4a9c" text-anchor="middle" font-family="Consolas, Menlo, monospace">WHERE doc_name =</text>
+  <text x="740" y="662" font-size="12" fill="#3b4a9c" text-anchor="middle" font-family="Consolas, Menlo, monospace">ANY(routed filings)</text>
+  <text x="740" y="706" font-size="12" fill="#5b6763" text-anchor="middle">same top-10 on 150 / 150 questions</text>
+
+  <!-- rerank + output -->
+  <line x1="845" y1="543" x2="888" y2="543" stroke="#3b4a9c" stroke-width="2" marker-end="url(#arB)"/>
+  <text x="867" y="535" font-size="11" fill="#3b4a9c" text-anchor="middle">top 30</text>
+  <rect x="890" y="498" width="180" height="90" rx="10" fill="#ffffff" stroke="#3b4a9c" stroke-width="2"/>
+  <text x="980" y="524" font-size="15" font-weight="700" fill="#1b2422" text-anchor="middle">Qwen3-Reranker</text>
+  <text x="980" y="545" font-size="12.5" fill="#1b2422" text-anchor="middle">0.6B cross-encoder</text>
+  <text x="980" y="564" font-size="12.5" fill="#5b6763" text-anchor="middle">reads question + page</text>
+  <line x1="980" y1="588" x2="980" y2="616" stroke="#3b4a9c" stroke-width="2" marker-end="url(#arB)"/>
+  <rect x="890" y="618" width="180" height="70" rx="10" fill="#e6e9f6" stroke="#3b4a9c" stroke-width="1.5"/>
+  <text x="980" y="646" font-size="15" font-weight="700" fill="#3b4a9c" text-anchor="middle">Evidence pages</text>
+  <text x="980" y="666" font-size="12.5" fill="#1b2422" text-anchor="middle">ranked, with page no.</text>
+
+  <!-- offline indexing -->
+  <text x="40" y="609" font-size="12" font-weight="700" letter-spacing="1.2" fill="#5b6763">OFFLINE · INDEXING</text>
+  <rect x="40" y="618" width="160" height="70" rx="10" fill="#fbfcfb" stroke="#7a8a86" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="120" y="646" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">84 SEC filings</text>
+  <text x="120" y="666" font-size="12.5" fill="#5b6763" text-anchor="middle">PDF · FinanceBench</text>
+  <line x1="200" y1="653" x2="223" y2="653" stroke="#7a8a86" stroke-width="2" marker-end="url(#arG)"/>
+  <rect x="225" y="618" width="185" height="70" rx="10" fill="#fbfcfb" stroke="#7a8a86" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="317" y="646" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">Page split</text>
+  <text x="317" y="666" font-size="12.5" fill="#5b6763" text-anchor="middle">PyMuPDF · 12,013 pages</text>
+  <line x1="410" y1="653" x2="433" y2="653" stroke="#7a8a86" stroke-width="2" marker-end="url(#arG)"/>
+  <rect x="435" y="618" width="170" height="70" rx="10" fill="#fbfcfb" stroke="#7a8a86" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="520" y="646" font-size="15" font-weight="600" fill="#1b2422" text-anchor="middle">Page embeddings</text>
+  <text x="520" y="666" font-size="12.5" fill="#5b6763" text-anchor="middle">Qwen3-Embedding</text>
+  <line x1="605" y1="653" x2="633" y2="653" stroke="#7a8a86" stroke-width="2" marker-end="url(#arG)"/>
+
+  <!-- search metrics -->
+  <rect x="40" y="718" width="420" height="34" rx="17" fill="#3b4a9c"/>
+  <text x="250" y="740" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">Recall@5  0.53 → 0.71 (150 analyst questions)</text>
+  <rect x="472" y="718" width="330" height="34" rx="17" fill="#e6e9f6" stroke="#3b4a9c"/>
+  <text x="637" y="740" font-size="14" font-weight="700" fill="#3b4a9c" text-anchor="middle">Router keeps the right filing 149 / 150</text>
+
+  <!-- footer -->
+  <text x="40" y="806" font-size="13" fill="#5b6763">Runs on Windows 11 + WSL2 Ubuntu (Triton kernels for Qwen3.5) · RTX 4060 Laptop 8 GB · models Apache-2.0 · data CORD-v2, FinanceBench</text>
+</svg>
