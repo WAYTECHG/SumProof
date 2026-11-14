@@ -62,7 +62,7 @@ function NavList({ items, path, onNavigate }: { items: typeof MAIN; path: string
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14.5px] font-medium transition-colors ${
-                active ? "bg-surface-solid text-mocha-deep shadow-card" : "text-ink/80 hover:bg-surface-solid/60 hover:text-ink"
+                active ? "bg-surface-solid text-mocha-deep shadow-card" : "text-ink hover:bg-surface-solid/60 hover:text-ink"
               }`}
             >
               <Icon size={19} strokeWidth={1.8} className={active ? "text-mocha" : "text-muted"} />
@@ -90,13 +90,13 @@ function Sidebar({ path, onNavigate }: { path: string; onNavigate?: () => void }
           href={GITHUB_URL}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14.5px] font-medium text-ink/80 hover:bg-surface-solid/60 hover:text-ink"
+          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14.5px] font-medium text-ink hover:bg-surface-solid/60 hover:text-ink"
         >
           <Github size={19} strokeWidth={1.8} className="text-muted" />
           Source code
         </a>
       </nav>
-      <div className="mt-auto rounded-2xl border border-line bg-surface-solid/80 p-4 text-center shadow-card">
+      <div className="mt-auto rounded-2xl border border-line bg-surface-solid p-4 text-center shadow-card">
         <p className="text-[14px] font-bold text-ink">Explorer mode</p>
         <p className="mt-1 text-[12.5px] leading-relaxed text-muted">
           Real outputs from the evaluation runs. Live mode runs the models on a local GPU.

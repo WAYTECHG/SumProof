@@ -17,7 +17,7 @@ export function Card({
   bodyClassName?: string;
 }) {
   return (
-    <section className={`min-w-0 rounded-[22px] border border-line bg-surface-solid/70 p-4 shadow-card sm:p-5 ${className}`}>
+    <section className={`min-w-0 rounded-[22px] border border-line bg-surface-solid p-4 shadow-card sm:p-5 ${className}`}>
       {(title || action) && (
         <div className="mb-3.5 flex items-center gap-2.5">
           {icon && <span className="text-mocha">{icon}</span>}
@@ -48,7 +48,7 @@ export function Banner({
 }) {
   return (
     <div className="banner mb-5 rounded-[22px] p-5 shadow-card sm:p-6">
-      <nav aria-label="Breadcrumb" className="mb-2 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-ink/80">
+      <nav aria-label="Breadcrumb" className="mb-2 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-ink">
         {crumbs.map((c, i) => (
           <span key={i} className="flex items-center gap-1.5">
             {i > 0 && <ChevronRight size={14} className="text-ink/50" />}
@@ -67,7 +67,7 @@ export function Banner({
         {pills && <div className="flex flex-wrap items-center gap-2">{pills}</div>}
         {right && <div className="ml-auto flex flex-wrap items-center gap-2">{right}</div>}
       </div>
-      {meta && <div className="mt-2 text-[13.5px] text-ink/80">{meta}</div>}
+      {meta && <div className="mt-2 text-[13.5px] text-ink">{meta}</div>}
       {children}
     </div>
   );
@@ -92,7 +92,7 @@ export function Pill({ tone = "light", children, className = "" }: { tone?: keyo
 
 export function Stat({ label, before, after, note }: { label: string; before: string; after: string; note?: string }) {
   return (
-    <div className="rounded-[20px] border border-line bg-surface-solid/80 p-4 shadow-card">
+    <div className="rounded-[20px] border border-line bg-surface-solid p-4 shadow-card">
       <p className="text-[12.5px] font-semibold tracking-wide text-muted uppercase">{label}</p>
       <p className="tabular mt-2 flex items-baseline gap-2 text-ink">
         <span className="text-[17px] text-muted line-through decoration-1">{before}</span>

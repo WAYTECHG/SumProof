@@ -150,7 +150,7 @@ export default function Overview() {
       <h2 className="mt-7 mb-3 text-[16px] font-bold text-ink">Explore the results</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {SCREENS.map(({ href, icon: Icon, title, text }) => (
-          <Link key={href} href={href} className="group rounded-[20px] border border-line bg-surface-solid/80 p-4 shadow-card transition hover:border-mocha">
+          <Link key={href} href={href} className="group rounded-[20px] border border-line bg-surface-solid p-4 shadow-card transition hover:border-mocha">
             <span className="mocha-grad grid h-9 w-9 place-items-center rounded-xl text-white">
               <Icon size={18} />
             </span>

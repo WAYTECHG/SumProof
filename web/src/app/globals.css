@@ -3,57 +3,58 @@
 /* Dark mode follows a class on <html>, set by the theme toggle (and the OS on first visit). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* SumProof design tokens: mocha mousse with latte, caramel and rose gradients. */
+/* SumProof design tokens: mocha with caramel and rose accents.
+   Tuned for contrast: opaque white cards, deep espresso text (~16:1), muted text ~7:1. */
 :root {
-  --bg: #f3ece6;
-  --surface: rgba(255, 252, 249, 0.74);
-  --surface-solid: #fffcf9;
-  --sunken: #f7f1ec;
-  --ink: #2b1f1a;
-  --muted: #7b6a62;
-  --line: #e7dcd3;
-  --mocha: #a47864;
-  --mocha-deep: #6f4e3d;
-  --caramel: #c8915c;
-  --rose: #e2a196;
-  --sage: #9fbfae;
-  --good: #3f7a4f;
-  --good-soft: #e3f0e6;
-  --warn: #b5562a;
-  --warn-soft: #fbe7dc;
-  --info: #5a6b9c;
-  --info-soft: #e7eaf5;
-  --banner: linear-gradient(110deg, #f6e6d6 0%, #eec8a6 38%, #e7a99b 72%, #dcc2df 100%);
-  --mocha-grad: linear-gradient(135deg, #b88a73 0%, #8a6250 100%);
-  --blob-a: rgba(226, 161, 150, 0.55);
-  --blob-b: rgba(159, 191, 174, 0.5);
-  --shadow: 0 1px 2px rgba(80, 52, 38, 0.06), 0 8px 24px rgba(80, 52, 38, 0.07);
+  --bg: #f4efea;
+  --surface: rgba(255, 255, 255, 0.94);
+  --surface-solid: #ffffff;
+  --sunken: #f6f0ea;
+  --ink: #1c120d;
+  --muted: #574740;
+  --line: #ded0c5;
+  --mocha: #9a6249;
+  --mocha-deep: #5c3523;
+  --caramel: #c97f3c;
+  --rose: #e8846f;
+  --sage: #6fa98d;
+  --good: #1f7a3c;
+  --good-soft: #dcf2e2;
+  --warn: #b23d0f;
+  --warn-soft: #fde3d6;
+  --info: #3c55a5;
+  --info-soft: #e2e8fb;
+  --banner: linear-gradient(110deg, #fde2c3 0%, #f8b98a 36%, #f39482 68%, #d6a8ec 100%);
+  --mocha-grad: linear-gradient(135deg, #ad7254 0%, #6e3f2a 100%);
+  --blob-a: rgba(243, 148, 130, 0.32);
+  --blob-b: rgba(111, 169, 141, 0.28);
+  --shadow: 0 1px 2px rgba(60, 35, 22, 0.08), 0 6px 20px rgba(60, 35, 22, 0.08);
 }
 
 .dark {
-  --bg: #17110e;
-  --surface: rgba(40, 30, 25, 0.72);
-  --surface-solid: #241b16;
-  --sunken: #1e1612;
-  --ink: #f2e8e1;
-  --muted: #b3a097;
-  --line: #3a2d26;
-  --mocha: #c99a83;
-  --mocha-deep: #e2bca8;
-  --caramel: #d9a670;
-  --rose: #d4897d;
-  --sage: #7fa592;
-  --good: #8fcf9e;
-  --good-soft: #1f3326;
-  --warn: #f0a07a;
-  --warn-soft: #3a2219;
-  --info: #a9b7e6;
-  --info-soft: #232a40;
-  --banner: linear-gradient(110deg, #4a3226 0%, #6b4430 40%, #6e3f3a 72%, #4b3a52 100%);
-  --mocha-grad: linear-gradient(135deg, #c99a83 0%, #9c6e58 100%);
-  --blob-a: rgba(180, 100, 90, 0.28);
-  --blob-b: rgba(90, 130, 110, 0.25);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --bg: #0f0a08;
+  --surface: rgba(26, 19, 15, 0.94);
+  --surface-solid: #1b130f;
+  --sunken: #140e0b;
+  --ink: #fbf5f1;
+  --muted: #d0bdb2;
+  --line: #3f2f27;
+  --mocha: #e3a888;
+  --mocha-deep: #f6d2bd;
+  --caramel: #f0a868;
+  --rose: #f29a86;
+  --sage: #86c6a6;
+  --good: #8ee6a6;
+  --good-soft: #163522;
+  --warn: #ff9a6b;
+  --warn-soft: #3d1d10;
+  --info: #a9bdff;
+  --info-soft: #1d2647;
+  --banner: linear-gradient(110deg, #6b3b22 0%, #93512c 38%, #9a4436 70%, #5f3f7a 100%);
+  --mocha-grad: linear-gradient(135deg, #e3a888 0%, #a3654a 100%);
+  --blob-a: rgba(200, 95, 75, 0.22);
+  --blob-b: rgba(80, 150, 120, 0.18);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
   color-scheme: dark;
 }
 
@@ -119,8 +120,8 @@ body {
 
 .glass {
   background: var(--surface);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .banner {

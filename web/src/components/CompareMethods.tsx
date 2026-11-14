@@ -45,7 +45,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
       >
         <QuestionPicker questions={questions} value={qi} onChange={choose} />
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink/80">
+          <span className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink">
             <Lightbulb size={14} /> Questions that show the difference:
           </span>
           {interesting.map(({ q, why }) => (
@@ -75,7 +75,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
             return (
               <section
                 key={m.key}
-                className={`min-w-0 rounded-[22px] border p-4 shadow-card ${final ? "border-mocha bg-surface-solid" : "border-line bg-surface-solid/70"}`}
+                className={`min-w-0 rounded-[22px] border p-4 shadow-card ${final ? "border-mocha bg-surface-solid" : "border-line bg-surface-solid"}`}
               >
                 <p className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">{m.note}</p>
                 <h2 className="mt-0.5 text-[15px] font-bold text-ink">{m.label}</h2>
