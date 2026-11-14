@@ -46,7 +46,7 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
             <Pill>150 analyst questions</Pill>
           </>
         }
-        meta="Pick a FinanceBench question. The router reads the company and year, Qwen3-Embedding finds candidate pages, and Qwen3-Reranker orders them."
+        meta="Pick an analyst question about a company's SEC filing. SumProof finds the pages that answer it and shows them with the matching words marked."
       >
         <QuestionPicker questions={questions} value={qi} onChange={choose} />
       </Banner>

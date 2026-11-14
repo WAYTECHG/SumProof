@@ -8,10 +8,10 @@ export default function ReceiptsGallery() {
   return (
     <>
       <Banner
-        crumbs={[{ label: "SumProof", href: "/" }, { label: "Receipts" }]}
-        title="Receipt checker"
+        crumbs={[{ label: "Model results", href: "/results/" }, { label: "Before vs after" }]}
+        title="Before vs after fine-tuning"
         pills={<Pill tone="dark">100 test receipts</Pill>}
-        meta="Pick a receipt to see how the fine-tuned model read it and which accounting rules it passes."
+        meta="Pick a test receipt to compare the model before and after fine-tuning against the human label, and to see how the checker picked its reading."
       />
       <Card>
         <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-8 2xl:grid-cols-10">

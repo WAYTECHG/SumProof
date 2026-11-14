@@ -38,7 +38,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
   return (
     <>
       <Banner
-        crumbs={[{ label: "SumProof", href: "/" }, { label: "Compare methods" }]}
+        crumbs={[{ label: "Model results", href: "/results/" }, { label: "Compare methods" }]}
         title="Compare methods"
         pills={<Pill tone="dark">same question · 5 retrieval steps</Pill>}
         meta="Each column is one step of the ladder. A green row is a page the financial analysts marked as the evidence."

@@ -49,7 +49,7 @@ export function QuickJump() {
     const out: Result[] = [];
     const num = q.match(/^#?(\d{1,2})$/);
     if (num && Number(num[1]) < 100) {
-      out.push({ key: `r${num[1]}`, kind: "receipt", label: `Receipt #${num[1]}`, sub: "Open in the receipt checker", href: `/receipts/${Number(num[1])}/` });
+      out.push({ key: `r${num[1]}`, kind: "receipt", label: `Receipt #${num[1]}`, sub: "Open the receipt", href: `/?sample=${Number(num[1])}` });
     }
     const words = q.split(/\s+/).filter(Boolean);
     for (const item of questions ?? []) {
@@ -100,7 +100,7 @@ export function QuickJump() {
             setOpen(false);
           }
         }}
-        placeholder="Jump to #17 or search questions…"
+        placeholder="Find a receipt number or a question…"
         autoComplete="off"
         role="combobox"
         aria-expanded={open && results.length > 0}

@@ -1,11 +1,12 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { Check as CheckIcon, ChevronLeft, ChevronRight, CircleAlert, Plus, RotateCcw, Send, Sparkles, Trash2, X, ZoomIn, ZoomOut } from "lucide-react";
+import { Check as CheckIcon, ChevronLeft, ChevronRight, CircleAlert, RotateCcw, Send, Sparkles, ZoomIn, ZoomOut } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { check, describe, formatAmount, parseAmount, SUMMARY_FIELDS, type Item, type Receipt, type SummaryField } from "@/lib/consistency";
+import { check, type Receipt } from "@/lib/consistency";
 import { useDecisions } from "@/lib/decisions";
 import type { ReceiptRecord } from "@/lib/types";
+import { CheckList, cloneReceipt as clone, ReceiptFields } from "./ReceiptFields";
 import { Banner, Button, Card, Pill, Segmented } from "./ui";
 
 type Source = "model" | "zeroshot" | "label";
@@ -14,71 +15,6 @@ const SOURCES: { value: Source; label: string }[] = [
   { value: "zeroshot", label: "Before fine-tuning" },
   { value: "label", label: "Human label" },
 ];
-const FIELD_LABEL: Record<SummaryField, string> = {
-  subtotal: "Subtotal",
-  discount: "Discount",
-  service: "Service charge",
-  tax: "Tax",
-  total: "Total",
-  cash: "Cash paid",
-  change: "Change",
-  card: "Card charge",
-};
-const ITEM_COLS: { key: keyof Item; label: string; money: boolean }[] = [
-  { key: "name", label: "Item", money: false },
-  { key: "qty", label: "Qty", money: true },
-  { key: "unit_price", label: "Unit price", money: true },
-  { key: "amount", label: "Amount", money: true },
-];
-
-const clone = (r: Receipt | null): Receipt => JSON.parse(JSON.stringify(r ?? { items: [] }));
-function norm(money: boolean, v: string | undefined): string {
-  if (!v) return "";
-  if (money) {
-    const p = parseAmount(v);
-    if (p !== null) return Math.abs(p).toFixed(2);
-  }
-  return v.replace(/\s+/g, " ").trim().toLowerCase();
-}
-
-function FieldInput({
-  id,
-  label,
-  value,
-  onChange,
-  differs,
-  labelValue,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  differs: boolean;
-  labelValue?: string;
-}) {
-  return (
-    <label htmlFor={id} className="flex min-w-0 flex-col gap-1">
-      <span className="flex items-center gap-1.5 text-[12px] font-semibold text-muted">
-        {label}
-        {differs && (
-          <span className="text-warn" title={`Human label: ${labelValue || "not printed"}`}>
-            ● differs
-          </span>
-        )}
-      </span>
-      <input
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="not printed"
-        className={`tabular h-9 w-full rounded-lg border bg-surface-solid px-2.5 text-[13.5px] text-ink placeholder:text-muted/60 focus:border-accent focus:outline-none ${
-          differs ? "border-warn/60" : "border-line"
-        }`}
-      />
-    </label>
-  );
-}
-
 export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; prev: number | null; next: number | null }) {
   const { decisions, save } = useDecisions();
   const decision = decisions[record.id];
@@ -116,8 +52,6 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
 
   const checks = useMemo(() => check(working), [working]);
   const failed = checks.filter((c) => !c.passed).length;
-  const items = working.items ?? [];
-  const goldItems = record.gold.items ?? [];
   const compare = showDiff && source !== "label";
 
   const decide = (status: "approved" | "review") => {
@@ -148,7 +82,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
   return (
     <>
       <Banner
-        crumbs={[{ label: "Review queue", href: "/queue/" }, { label: `Receipt #${record.id}` }]}
+        crumbs={[{ label: "Model results", href: "/results/" }, { label: "Before vs after", href: "/receipts/" }, { label: `Receipt #${record.id}` }]}
         title={`Receipt #${record.id}`}
         pills={
           <>
@@ -249,97 +183,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               )}
             </div>
 
-            <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
-              <table className="w-full min-w-[520px] text-[13.5px]">
-                <thead>
-                  <tr className="border-b border-line text-left text-[11.5px] tracking-wide text-muted uppercase">
-                    {ITEM_COLS.map((c) => (
-                      <th key={c.key} className={`px-2.5 py-2 font-semibold ${c.key === "name" ? "w-[42%]" : ""}`}>
-                        {c.label}
-                      </th>
-                    ))}
-                    <th className="w-10 px-2 py-2">
-                      <span className="sr-only">Remove</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((it, i) => (
-                    <tr key={i} className="border-b border-line last:border-0">
-                      {ITEM_COLS.map((c) => {
-                        const v = it[c.key] ?? "";
-                        const g = goldItems[i]?.[c.key];
-                        const differs = compare && norm(c.money, v) !== norm(c.money, g);
-                        return (
-                          <td key={c.key} className="px-1.5 py-1.5">
-                            <input
-                              aria-label={`${c.label}, line ${i + 1}`}
-                              value={v}
-                              title={differs ? `Human label: ${g || "empty"}` : undefined}
-                              onChange={(e) =>
-                                update((r) => {
-                                  (r.items ??= [])[i] = { ...r.items![i], [c.key]: e.target.value };
-                                })
-                              }
-                              className={`tabular h-8 w-full rounded-md border bg-transparent px-2 text-[13.5px] text-ink focus:border-accent focus:outline-none ${
-                                differs ? "border-warn/60 bg-warn-soft/40" : "border-transparent hover:border-line"
-                              }`}
-                            />
-                          </td>
-                        );
-                      })}
-                      <td className="px-1 py-1.5 text-center">
-                        <button
-                          type="button"
-                          aria-label={`Remove line ${i + 1}`}
-                          onClick={() => update((r) => void r.items?.splice(i, 1))}
-                          className="grid h-8 w-8 place-items-center rounded-md text-muted hover:bg-warn-soft hover:text-warn"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {items.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-3 py-4 text-center text-[13px] text-muted">
-                        No items in this reading.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            <button
-              type="button"
-              onClick={() => update((r) => void (r.items ??= []).push({ name: "", qty: "", unit_price: "", amount: "" }))}
-              className="mt-2 flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[13px] font-semibold text-accent-deep hover:underline"
-            >
-              <Plus size={15} /> Add line
-            </button>
-
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {SUMMARY_FIELDS.map((f) => {
-                const v = working[f] ?? "";
-                const g = record.gold[f];
-                return (
-                  <FieldInput
-                    key={f}
-                    id={`field-${f}`}
-                    label={FIELD_LABEL[f]}
-                    value={v}
-                    labelValue={g}
-                    differs={compare && norm(true, v) !== norm(true, g)}
-                    onChange={(val) =>
-                      update((r) => {
-                        if (val.trim()) r[f] = val;
-                        else delete r[f];
-                      })
-                    }
-                  />
-                );
-              })}
-            </div>
+            <ReceiptFields value={working} update={update} gold={record.gold} compare={compare} />
           </Card>
 
           <Card
@@ -363,25 +207,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
                 None of the five rules can run: the fields each rule needs are not all present. Try adding a total or the item amounts.
               </p>
             ) : (
-              <ul className="flex flex-col gap-2">
-                {checks.map((c) => (
-                  <li
-                    key={c.name}
-                    className={`flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-3 py-2.5 ${
-                      c.passed ? "border-line bg-surface-solid" : "border-warn/50 bg-warn-soft/50"
-                    }`}
-                  >
-                    <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${c.passed ? "bg-good-soft text-good" : "bg-warn text-white"}`}>
-                      {c.passed ? <CheckIcon size={14} strokeWidth={3} /> : <X size={14} strokeWidth={3} />}
-                    </span>
-                    <span className="min-w-0 flex-1 text-[13.5px] font-semibold text-ink">{describe(c)}</span>
-                    <span className="tabular text-[13px] text-muted">
-                      expected <span className="font-semibold text-ink">{formatAmount(c.expected)}</span> · found{" "}
-                      <span className={`font-semibold ${c.passed ? "text-ink" : "text-warn"}`}>{formatAmount(c.found)}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <CheckList checks={checks} />
             )}
             <p className="mt-3 text-[12.5px] leading-relaxed text-muted">
               The rules recheck as you edit, using a TypeScript port of the Python checker that agrees with it on all 277 rule results of the

@@ -79,8 +79,8 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
   return (
     <>
       <Banner
-        crumbs={[{ label: "SumProof", href: "/" }, { label: "Review queue" }]}
-        title="Review queue"
+        crumbs={[{ label: "SumProof", href: "/" }, { label: "Receipt inbox" }]}
+        title="Receipt inbox"
         pills={
           <>
             <Pill tone="good">{counts.accepted} auto-accepted</Pill>
@@ -88,7 +88,7 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
             {counts.mine > 0 && <Pill tone="dark">{counts.mine} decided by you</Pill>}
           </>
         }
-        meta="All 100 CORD test receipts as read by the fine-tuned model. Only receipts that break an accounting rule need a person."
+        meta="The 100 sample receipts as SumProof read them. Only the ones whose numbers do not add up need a person to check."
         right={
           <Button tone="accent" onClick={exportCsv}>
             <Download size={16} /> Export CSV
@@ -138,7 +138,7 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
             <tbody className="tabular">
               {shown.map((x) => {
                 const s = STATUS[x.status];
-                const href = `/receipts/${x.r.id}/`;
+                const href = `/?sample=${x.r.id}`;
                 const first = (x.r.pred?.items ?? []).slice(0, 2).map((it) => it.name).filter(Boolean).join(", ");
                 return (
                   <tr key={x.r.id} className="border-b border-line transition-colors last:border-0 hover:bg-sunken">

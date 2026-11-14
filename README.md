@@ -79,11 +79,16 @@ Solid boxes run for every request; dashed boxes are offline steps that run once.
 
 ## Interface
 
-A Next.js + TypeScript explorer of the real results ([`web/`](web/)): a receipt checker where you can edit any field and watch the accounting rules recheck live, a review queue with CSV export, filing search with a page viewer, and a side-by-side comparison of the five retrieval steps. One clean light theme (navy sidebar, blue accent); works on phones.
+A Next.js + TypeScript app ([`web/`](web/)), live at **[sumproof.vercel.app](https://sumproof.vercel.app)**, in two parts:
 
-![SumProof interface: overview](docs/interface-overview.png)
+- **The app**, for people who just want the result: upload a receipt photo and get the items and totals back with a plain answer, *"Everything adds up"* or *"Please check one number"*. Fix any field and the checks rerun as you type; save, flag or download as CSV. Filing search finds the pages of an SEC filing that answer a question.
+- **Under the hood**, for technical readers: the model results dashboard, before vs after fine-tuning on every test receipt, the five retrieval steps side by side, and the architecture.
 
-![SumProof interface: receipt checker](docs/interface-checker.png)
+Reading your own photos needs the fine-tuned model on a GPU (see *Run it*); the free online demo shows the model's real saved readings of the 100 test receipts.
+
+![SumProof: scan a receipt](docs/interface-scan.png)
+
+![SumProof: model results](docs/interface-results.png)
 
 ## Results
 
@@ -144,7 +149,7 @@ Receipt training and inference need Linux for Qwen3.5's Triton kernels (WSL2 on 
 
 ```bash
 pip install -r requirements.txt                   # retrieval, vector stores, tests
-pytest -q                                         # 24 tests, no GPU or database needed
+pytest -q                                         # 27 tests, no GPU or database needed
 
 # Financial retrieval
 python -m sumproof.rag.download_financebench      # questions + 84 filings (~166 MB) -> 12,013 pages
@@ -157,6 +162,10 @@ pip install -r requirements-gpu.txt               # after installing PyTorch wit
 python -m sumproof.receipts.train_qlora --epochs 1 --out runs/sft
 bash scripts/run_receipts.sh --eval-only          # the four rows of the receipts table
 tensorboard --logdir runs                         # live training dashboard
+
+# Live receipt reading in the interface
+bash scripts/serve.sh                             # FastAPI reader on localhost:8000 (fine-tuned model)
+cd web && npm install && npm run dev              # open http://localhost:3000 and upload a photo
 ```
 
 ## Project layout
@@ -166,9 +175,10 @@ sumproof/receipts/   schema, amounts (money parsing), consistency (accounting ch
                      vlm (Qwen3.5 loading, sampling, scoring), train_qlora, evaluate, plot_training
 sumproof/rag/        download_financebench, financebench (router + five-step evaluation), fusion (BM25 tokens, RRF),
                      index (FAISS), pgstore (PostgreSQL + pgvector), bench_faiss
-scripts/             setup_wsl.sh, setup_pgvector.sh, run_receipts.sh, wsl.sh
+sumproof/api.py      live reader for the interface (FastAPI: POST a photo, get the fields)
+scripts/             setup_wsl.sh, setup_pgvector.sh, run_receipts.sh, serve.sh, wsl.sh
 results/             summary JSON for every number in this README
-tests/               receipts (parsing, checker, metrics) and retrieval (router, fusion, FAISS, metrics)
+tests/               receipts (parsing, checker, metrics), retrieval (router, fusion, FAISS, metrics), live reader API
 web/                 Next.js + TypeScript interface (see web/README.md); data from `python -m sumproof.export_web`
 ```
 

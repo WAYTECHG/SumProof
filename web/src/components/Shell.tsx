@@ -9,8 +9,8 @@ import {
   Inbox,
   Menu,
   Network,
-  CircleCheck,
   ReceiptText,
+  ScanLine,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -20,14 +20,17 @@ import { QuickJump } from "./QuickJump";
 
 import { GITHUB_URL } from "@/lib/site";
 
+// The app: what an everyday user needs.
 const MAIN = [
-  { href: "/", label: "Overview", icon: BarChart3 },
-  { href: "/receipts/", label: "Receipt checker", icon: ReceiptText },
-  { href: "/queue/", label: "Review queue", icon: Inbox },
+  { href: "/", label: "Scan receipt", icon: ScanLine },
+  { href: "/queue/", label: "Receipt inbox", icon: Inbox },
   { href: "/search/", label: "Filing search", icon: FileSearch },
-  { href: "/compare/", label: "Compare methods", icon: Columns3 },
 ];
+// How the models were built and measured, for technical readers.
 const WORKSPACE = [
+  { href: "/results/", label: "Model results", icon: BarChart3 },
+  { href: "/receipts/", label: "Before vs after", icon: ReceiptText },
+  { href: "/compare/", label: "Compare search methods", icon: Columns3 },
   { href: "/architecture/", label: "Architecture", icon: Network },
   { href: "/about/", label: "Data & licences", icon: BookOpen },
 ];
@@ -79,10 +82,12 @@ function Sidebar({ path, onNavigate }: { path: string; onNavigate?: () => void }
   return (
     <div className="flex h-full flex-col gap-6 px-4 py-6">
       <Logo />
-      <nav aria-label="Main" className="flex flex-col gap-2 border-t border-white/10 pt-5">
+      <nav aria-label="App" className="flex flex-col gap-2 border-t border-white/10 pt-5">
+        <p className="px-3 text-[11.5px] font-medium tracking-[0.1em] text-nav-muted uppercase">App</p>
         <NavList items={MAIN} path={path} onNavigate={onNavigate} />
       </nav>
-      <nav aria-label="Workspace" className="flex flex-col gap-2 border-t border-white/10 pt-5">
+      <nav aria-label="Model results" className="flex flex-col gap-2 border-t border-white/10 pt-5">
+        <p className="px-3 text-[11.5px] font-medium tracking-[0.1em] text-nav-muted uppercase">Under the hood</p>
         <NavList items={WORKSPACE} path={path} onNavigate={onNavigate} />
         <a
           href={GITHUB_URL}
@@ -95,9 +100,9 @@ function Sidebar({ path, onNavigate }: { path: string; onNavigate?: () => void }
         </a>
       </nav>
       <div className="mt-auto rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
-        <p className="text-[13.5px] font-semibold text-white">Explorer mode</p>
+        <p className="text-[13.5px] font-semibold text-white">Online demo</p>
         <p className="mt-1 text-[12.5px] leading-relaxed text-nav-muted">
-          Real outputs from the evaluation runs. Live mode runs the models on a local GPU.
+          Sample receipts show real model outputs. Reading your own photos needs the reader running on a GPU.
         </p>
         <p className="mt-2.5 text-[12.5px] font-semibold text-white">$0 · open models</p>
       </div>
@@ -146,10 +151,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </button>
           <QuickJump />
           <div className="ml-auto flex items-center gap-4">
-            <span className="hidden items-center gap-1.5 text-[13.5px] text-ink md:flex">
-              <CircleCheck size={17} className="text-good" />
-              Real evaluation results
-            </span>
             <a
               href={GITHUB_URL}
               target="_blank"

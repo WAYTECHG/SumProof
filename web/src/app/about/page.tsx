@@ -6,7 +6,7 @@ export default function AboutPage() {
   return (
     <>
       <Banner
-        crumbs={[{ label: "SumProof", href: "/" }, { label: "Data & licences" }]}
+        crumbs={[{ label: "Model results", href: "/results/" }, { label: "Data & licences" }]}
         title="Data & licences"
         pills={<Pill tone="dark">real data · open models</Pill>}
         meta="What this site shows, where the data comes from, and how the numbers were produced."
@@ -19,7 +19,7 @@ export default function AboutPage() {
             checker runs live in your browser, so edits are rechecked instantly.
           </p>
           <p className="mt-3 text-[13.5px] leading-relaxed text-muted">
-            Live mode, where the same interface calls a local FastAPI server running the models, is the next step.
+            Live mode: run the FastAPI reader on a GPU machine (bash scripts/wsl.sh bash scripts/serve.sh) and open the site locally; the Scan receipt page then reads uploaded photos with the fine-tuned model.
           </p>
         </Card>
         <Card title="How the numbers were produced" icon={<Cpu size={18} />}>

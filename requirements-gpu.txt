@@ -8,3 +8,8 @@ bitsandbytes>=0.45
 accelerate
 datasets
 flash-linear-attention   # Triton kernels for Qwen3.5's Gated DeltaNet layers (Linux only)
+
+# Live reader for the web interface (python -m sumproof.api)
+fastapi
+uvicorn
+python-multipart

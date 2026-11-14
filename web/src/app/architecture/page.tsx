@@ -36,7 +36,7 @@ export default function ArchitecturePage() {
   return (
     <>
       <Banner
-        crumbs={[{ label: "SumProof", href: "/" }, { label: "Architecture" }]}
+        crumbs={[{ label: "Model results", href: "/results/" }, { label: "Architecture" }]}
         title="Architecture"
         pills={<Pill tone="dark">two pipelines</Pill>}
         meta="Solid boxes run for every request; dashed boxes are offline steps that run once."

@@ -1,14 +1,24 @@
 # SumProof web interface
 
-Next.js 15 + TypeScript + Tailwind CSS. A static explorer of the real evaluation results, deployable for free on Vercel.
+Next.js 15 + TypeScript + Tailwind CSS, deployable for free on Vercel as a static site.
+
+**App** (for everyday users)
 
 | Screen | What it does |
 |---|---|
-| Overview | Headline results, retrieval ladder, training curve, vector-store benchmark |
-| Receipt checker | Photo, the model's reading (fine-tuned / before fine-tuning / human label), editable fields, live accounting checks, approve or send to review |
-| Review queue | All 100 test receipts with status, filters and CSV export |
-| Filing search | 150 FinanceBench questions: router output, top evidence pages, page viewer with highlights |
-| Compare methods | The same question under BM25, dense, hybrid, routing and reranking, side by side |
+| Scan receipt (`/`) | Upload a photo (needs the live reader) or pick a sample; plain-language result, editable fields, live checks, save / flag / CSV |
+| Receipt inbox (`/queue/`) | The 100 sample receipts with status, filters and CSV export |
+| Filing search (`/search/`) | 150 FinanceBench questions: top evidence pages and a page viewer with highlights |
+
+**Under the hood** (for technical readers)
+
+| Screen | What it does |
+|---|---|
+| Model results (`/results/`) | Headline results, retrieval ladder, training curve, vector-store benchmark |
+| Before vs after (`/receipts/`) | Each test receipt: fine-tuned vs before fine-tuning vs human label, and how the checker picked its reading |
+| Compare search methods (`/compare/`) | The same question under BM25, dense, hybrid, routing and reranking, side by side |
+
+**Live reading.** The scan page calls the FastAPI reader (`python -m sumproof.api`, see `scripts/serve.sh`) when the site runs on localhost, or at `NEXT_PUBLIC_SUMPROOF_API` when that is set at build time. Without it, the page offers the samples only, so the public site never contacts a visitor's machine.
 
 The accounting checker runs in the browser (`src/lib/consistency.ts`), a port of the Python checker; `node scripts/parity.ts` confirms they agree on all 277 rule results of the test set.
 
