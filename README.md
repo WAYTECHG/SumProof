@@ -8,12 +8,6 @@
 Real data · open models · one 8 GB laptop GPU · $0
 
 <p>
-  <img alt="Receipt field F1 0.79 to 0.94" src="https://img.shields.io/badge/receipt%20field%20F1-0.79%20%E2%86%92%200.94-a47864?style=for-the-badge">
-  <img alt="Fully correct receipts 6 to 62 of 100" src="https://img.shields.io/badge/fully%20correct-6%20%E2%86%92%2062%20%2F%20100-a47864?style=for-the-badge">
-  <img alt="FinanceBench Recall@5 0.53 to 0.71" src="https://img.shields.io/badge/Recall%405-0.53%20%E2%86%92%200.71-6f4e3d?style=for-the-badge">
-</p>
-
-<p>
   <b>Models</b><br>
   <img alt="Qwen3.5-4B" src="https://img.shields.io/badge/Qwen3.5--4B-vision--language-c8915c?style=flat-square">
   <img alt="Qwen3-Embedding-0.6B" src="https://img.shields.io/badge/Qwen3--Embedding-0.6B-c8915c?style=flat-square">
@@ -46,15 +40,6 @@ Real data · open models · one 8 GB laptop GPU · $0
   <img alt="React" src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB">
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
   <img alt="Vercel" src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white">
-</p>
-
-<p>
-  <b>Data and environment</b><br>
-  <img alt="CORD-v2 receipts" src="https://img.shields.io/badge/data-CORD--v2%20receipts-6f4e3d?style=flat-square">
-  <img alt="FinanceBench" src="https://img.shields.io/badge/data-FinanceBench%20SEC%20filings-6f4e3d?style=flat-square">
-  <img alt="WSL2 Ubuntu" src="https://img.shields.io/badge/WSL2-Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white">
-  <img alt="NVIDIA RTX 4060 8 GB" src="https://img.shields.io/badge/RTX%204060-8%20GB-76B900?style=flat-square&logo=nvidia&logoColor=white">
-  <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-555555?style=flat-square">
 </p>
 
 <p>
