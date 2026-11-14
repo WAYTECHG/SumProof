@@ -102,6 +102,7 @@ tests/               receipts (parsing, checker, metrics) and retrieval (router,
 
 ## Data and licences
 
-- CORD-v2: CC-BY-4.0, NAVER Clova (real Indonesian receipts).
-- FinanceBench: CC-BY-NC-4.0, Patronus AI (real SEC filings, analyst-written questions and evidence). Non-commercial use.
-- Models: Qwen3.5-4B, Qwen3-Embedding-0.6B and Qwen3-Reranker-0.6B, all Apache-2.0.
+- Code: MIT (see `LICENSE`). The licence covers the code in this repository only; no dataset or model weights are included.
+- CORD-v2: CC-BY-4.0, NAVER Clova (real Indonesian receipts), downloaded at run time.
+- FinanceBench: CC-BY-NC-4.0, Patronus AI (real SEC filings, analyst-written questions and evidence), downloaded at run time; non-commercial use.
+- Models: Qwen3.5-4B, Qwen3-Embedding-0.6B and Qwen3-Reranker-0.6B, all Apache-2.0, downloaded from Hugging Face.
