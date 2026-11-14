@@ -1,63 +1,31 @@
 @import "tailwindcss";
 
-/* Dark mode follows a class on <html>, set by the theme toggle (and the OS on first visit). */
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* SumProof design tokens: cool grey canvas, white cards, near-black text, vivid orange accent,
-   lime-to-orange banner, pink and teal watercolour blobs. Text contrast ~18:1, muted ~6.5:1. */
+/* SumProof design tokens: one light theme. Navy sidebar, light grey canvas, white cards with thin
+   borders, royal-blue accent. Text contrast ~16:1, muted ~6:1, blue on white ~5.6:1. */
 :root {
-  --bg: #e8e6eb;
-  --surface: rgba(246, 245, 248, 0.92);
+  --bg: #f5f6f8;
+  --surface: #ffffff;
   --surface-solid: #ffffff;
-  --sunken: #f4f3f6;
-  --ink: #111114;
-  --muted: #5c5c66;
-  --line: #e4e3e8;
-  --accent: #f0500f;
-  --accent-deep: #c2410c;
-  --caramel: #f59e0b;
-  --rose: #f4728c;
-  --sage: #2dd4bf;
-  --good: #15803d;
-  --good-soft: #dcfce7;
-  --warn: #dc2626;
-  --warn-soft: #fee2e2;
-  --info: #4338ca;
-  --info-soft: #e0e7ff;
-  --banner: linear-gradient(100deg, #d9f99d 0%, #ecfc4c 30%, #fde047 55%, #fb923c 100%);
-  --accent-grad: linear-gradient(135deg, #ff7a3d 0%, #f04a0e 100%);
-  --accent-glow: 0 8px 24px rgba(240, 74, 14, 0.38);
-  --blob-a: rgba(244, 114, 140, 0.42);
-  --blob-b: rgba(45, 212, 191, 0.35);
-  --shadow: 0 1px 2px rgba(17, 17, 20, 0.05), 0 6px 20px rgba(17, 17, 20, 0.06);
-}
-
-.dark {
-  --bg: #0c0c0f;
-  --surface: rgba(22, 22, 27, 0.92);
-  --surface-solid: #17171c;
-  --sunken: #111116;
-  --ink: #f7f7f9;
-  --muted: #b4b4bf;
-  --line: #2a2a32;
-  --accent: #ff6a2c;
-  --accent-deep: #ff9b6b;
-  --caramel: #fbbf24;
-  --rose: #fb7f9a;
-  --sage: #5eead4;
-  --good: #4ade80;
-  --good-soft: #123020;
-  --warn: #f87171;
-  --warn-soft: #3a1414;
-  --info: #a5b4fc;
-  --info-soft: #1e1f4a;
-  --banner: linear-gradient(100deg, #3f5a12 0%, #5d6410 35%, #7a5a0c 62%, #9a3c0e 100%);
-  --accent-grad: linear-gradient(135deg, #ff7a3d 0%, #e5450b 100%);
-  --accent-glow: 0 8px 26px rgba(255, 106, 44, 0.32);
-  --blob-a: rgba(244, 114, 140, 0.2);
-  --blob-b: rgba(45, 212, 191, 0.16);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4);
-  color-scheme: dark;
+  --sunken: #f7f8fa;
+  --ink: #1a1f36;
+  --muted: #5b6275;
+  --line: #e4e7ec;
+  --accent: #3a5bd9;
+  --accent-deep: #2c47b8;
+  --accent-soft: #eef1fd;
+  --caramel: #f5b83d;
+  --rose: #e5484d;
+  --sage: #12a594;
+  --good: #16803c;
+  --good-soft: #e7f6ec;
+  --warn: #d92d20;
+  --warn-soft: #fdecea;
+  --info: #3a5bd9;
+  --info-soft: #eef1fd;
+  --nav: #232a52;
+  --nav-ink: #e8eaf6;
+  --nav-muted: #a4abd1;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
 @theme inline {
@@ -70,6 +38,10 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-nav: var(--nav);
+  --color-nav-ink: var(--nav-ink);
+  --color-nav-muted: var(--nav-muted);
   --color-caramel: var(--caramel);
   --color-rose: var(--rose);
   --color-sage: var(--sage);
@@ -79,7 +51,7 @@
   --color-warn-soft: var(--warn-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "Cascadia Mono", Consolas, monospace;
   --shadow-card: var(--shadow);
 }
@@ -95,48 +67,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Soft colour blobs behind the app, like watercolour on paper. */
-.backdrop::before,
-.backdrop::after {
-  content: "";
-  position: fixed;
-  pointer-events: none;
-  z-index: 0;
-  border-radius: 9999px;
-  filter: blur(80px);
-}
-.backdrop::before {
-  width: 46vw;
-  height: 46vw;
-  left: -14vw;
-  bottom: -16vw;
-  background: radial-gradient(circle, var(--blob-a), transparent 70%);
-}
-.backdrop::after {
-  width: 40vw;
-  height: 40vw;
-  right: -12vw;
-  top: -10vw;
-  background: radial-gradient(circle, var(--blob-b), transparent 70%);
-}
-
-.glass {
-  background: var(--surface);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.banner {
-  background: var(--banner);
-}
-
-.accent-grad {
-  background: var(--accent-grad);
-}
-
-/* Orange glow on primary call-to-action buttons, like the reference's CTA. */
-.accent-glow {
-  box-shadow: var(--accent-glow);
+.accent-fill {
+  background: var(--accent);
 }
 
 .tabular {

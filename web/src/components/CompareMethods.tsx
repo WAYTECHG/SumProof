@@ -75,7 +75,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
             return (
               <section
                 key={m.key}
-                className={`min-w-0 rounded-[22px] border p-4 shadow-card ${final ? "border-accent bg-surface-solid" : "border-line bg-surface-solid"}`}
+                className={`min-w-0 rounded-xl border p-4 shadow-card ${final ? "border-accent bg-surface-solid" : "border-line bg-surface-solid"}`}
               >
                 <p className="text-[11.5px] font-semibold tracking-wide text-muted uppercase">{m.note}</p>
                 <h2 className="mt-0.5 text-[15px] font-bold text-ink">{m.label}</h2>

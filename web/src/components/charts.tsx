@@ -26,7 +26,7 @@ export function BarBreakdown({
                 {format(b.value)}
               </span>
               <div
-                className={`w-full max-w-[86px] rounded-xl transition-all ${b.highlight ? "accent-grad accent-glow" : "bg-ink/15"}`}
+                className={`w-full max-w-[86px] rounded-xl transition-all ${b.highlight ? "accent-fill" : "bg-ink/15"}`}
                 style={{ height: `${h}%` }}
               />
             </div>

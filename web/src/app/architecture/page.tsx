@@ -19,8 +19,8 @@ function Steps({ steps }: { steps: string[][] }) {
   return (
     <ol className="flex flex-col gap-2.5">
       {steps.map(([title, text, file], k) => (
-        <li key={title} className="flex gap-3 rounded-2xl border border-line bg-surface-solid p-3.5">
-          <span className="accent-grad grid h-7 w-7 shrink-0 place-items-center rounded-full text-[13px] font-bold text-white">{k + 1}</span>
+        <li key={title} className="flex gap-3 rounded-xl border border-line bg-surface-solid p-3.5">
+          <span className="accent-fill grid h-7 w-7 shrink-0 place-items-center rounded-full text-[13px] font-bold text-white">{k + 1}</span>
           <div className="min-w-0">
             <p className="text-[14px] font-bold text-ink">{title}</p>
             <p className="mt-0.5 text-[13.5px] leading-relaxed text-muted">{text}</p>
@@ -42,7 +42,7 @@ export default function ArchitecturePage() {
         meta="Solid boxes run for every request; dashed boxes are offline steps that run once."
       />
       <Card className="mb-5">
-        <div className="overflow-x-auto rounded-2xl">
+        <div className="overflow-x-auto rounded-xl">
           <img src="/architecture.svg" alt="SumProof architecture: receipt reader and financial filing search pipelines" className="w-full min-w-[720px]" />
         </div>
       </Card>

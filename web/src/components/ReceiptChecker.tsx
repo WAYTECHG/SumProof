@@ -168,7 +168,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               </Button>
             ) : null}
             {next !== null ? (
-              <Button tone="dark" href={`/receipts/${next}/`}>
+              <Button tone="accent" href={`/receipts/${next}/`}>
                 #{next} <ChevronRight size={16} />
               </Button>
             ) : null}
@@ -190,7 +190,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               </button>
             }
           >
-            <div className={`overflow-auto rounded-2xl border border-line bg-sunken ${zoom ? "max-h-[720px]" : ""}`}>
+            <div className={`overflow-auto rounded-xl border border-line bg-sunken ${zoom ? "max-h-[720px]" : ""}`}>
               <img
                 src={`/data/${record.image}`}
                 alt={`Photo of receipt #${record.id} from the CORD-v2 test set`}
@@ -212,7 +212,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
                 >
                   <span className="w-24 shrink-0 font-semibold text-ink">{k === 0 ? "Greedy" : `Sample ${k}`}</span>
                   <div className="h-2 flex-1 overflow-hidden rounded-full bg-line" aria-hidden>
-                    <div className="accent-grad h-full rounded-full" style={{ width: `${Math.round((c.consistency ?? 0) * 100)}%` }} />
+                    <div className="accent-fill h-full rounded-full" style={{ width: `${Math.round((c.consistency ?? 0) * 100)}%` }} />
                   </div>
                   <span className="tabular w-24 shrink-0 text-right text-muted">
                     {c.valid ? `${Math.round((c.consistency ?? 0) * 100)}% rules` : "invalid JSON"}
@@ -249,7 +249,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
               )}
             </div>
 
-            <div className="relative overflow-x-auto rounded-2xl border border-line bg-surface-solid">
+            <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
               <table className="w-full min-w-[520px] text-[13.5px]">
                 <thead>
                   <tr className="border-b border-line text-left text-[11.5px] tracking-wide text-muted uppercase">
@@ -390,7 +390,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
           </Card>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button tone="dark" onClick={() => decide("approved")}>
+            <Button tone="accent" onClick={() => decide("approved")}>
               <CheckIcon size={16} /> Approve
             </Button>
             <Button onClick={() => decide("review")}>

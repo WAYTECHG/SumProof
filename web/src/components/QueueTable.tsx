@@ -90,7 +90,7 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
         }
         meta="All 100 CORD test receipts as read by the fine-tuned model. Only receipts that break an accounting rule need a person."
         right={
-          <Button tone="dark" onClick={exportCsv}>
+          <Button tone="accent" onClick={exportCsv}>
             <Download size={16} /> Export CSV
           </Button>
         }
@@ -122,7 +122,7 @@ export function QueueTable({ receipts }: { receipts: ReceiptRecord[] }) {
           </label>
         </div>
 
-        <div className="relative overflow-x-auto rounded-2xl border border-line bg-surface-solid">
+        <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
           <table className="w-full min-w-[720px] text-[13.5px]">
             <thead>
               <tr className="border-b border-line text-left text-[11.5px] tracking-wide text-muted uppercase">

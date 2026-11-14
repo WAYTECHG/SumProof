@@ -17,11 +17,11 @@ export function Card({
   bodyClassName?: string;
 }) {
   return (
-    <section className={`min-w-0 rounded-[22px] border border-line bg-surface-solid p-4 shadow-card sm:p-5 ${className}`}>
+    <section className={`min-w-0 rounded-xl border border-line bg-surface-solid p-4 shadow-card sm:p-5 ${className}`}>
       {(title || action) && (
         <div className="mb-3.5 flex items-center gap-2.5">
           {icon && <span className="text-accent">{icon}</span>}
-          {title && <h2 className="text-[16px] font-bold text-ink">{title}</h2>}
+          {title && <h2 className="text-[16px] font-semibold text-ink">{title}</h2>}
           {action && <div className="ml-auto flex items-center gap-2">{action}</div>}
         </div>
       )}
@@ -30,7 +30,7 @@ export function Card({
   );
 }
 
-/** Gradient page header, like the lead banner in the reference design. */
+/** Plain page header: breadcrumb, title with status pills, one-line description. */
 export function Banner({
   crumbs,
   title,
@@ -47,13 +47,13 @@ export function Banner({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="banner mb-5 rounded-[22px] p-5 shadow-card sm:p-6">
-      <nav aria-label="Breadcrumb" className="mb-2 flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-ink">
+    <div className="mb-6">
+      <nav aria-label="Breadcrumb" className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[13px] text-muted">
         {crumbs.map((c, i) => (
           <span key={i} className="flex items-center gap-1.5">
-            {i > 0 && <ChevronRight size={14} className="text-ink/50" />}
+            {i > 0 && <ChevronRight size={14} className="text-muted/60" />}
             {c.href ? (
-              <Link href={c.href} className="hover:underline">
+              <Link href={c.href} className="hover:text-accent">
                 {c.label}
               </Link>
             ) : (
@@ -63,28 +63,28 @@ export function Banner({
         ))}
       </nav>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-        <h1 className="text-[24px] font-extrabold tracking-tight text-ink [text-wrap:balance] sm:text-[28px]">{title}</h1>
+        <h1 className="text-[24px] font-semibold tracking-tight text-ink [text-wrap:balance] sm:text-[28px]">{title}</h1>
         {pills && <div className="flex flex-wrap items-center gap-2">{pills}</div>}
         {right && <div className="ml-auto flex flex-wrap items-center gap-2">{right}</div>}
       </div>
-      {meta && <div className="mt-2 text-[13.5px] text-ink">{meta}</div>}
+      {meta && <div className="mt-1 text-[14px] text-muted">{meta}</div>}
       {children}
     </div>
   );
 }
 
 const PILL_TONES = {
-  dark: "bg-ink text-bg",
+  dark: "bg-accent-soft text-accent-deep",
   light: "bg-surface-solid text-ink border border-line",
   good: "bg-good-soft text-good",
   warn: "bg-warn-soft text-warn",
   info: "bg-info-soft text-info",
-  accent: "accent-grad text-white",
+  accent: "accent-fill text-white",
 } as const;
 
 export function Pill({ tone = "light", children, className = "" }: { tone?: keyof typeof PILL_TONES; children: React.ReactNode; className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12.5px] font-semibold whitespace-nowrap ${PILL_TONES[tone]} ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12.5px] font-medium whitespace-nowrap ${PILL_TONES[tone]} ${className}`}>
       {children}
     </span>
   );
@@ -92,12 +92,12 @@ export function Pill({ tone = "light", children, className = "" }: { tone?: keyo
 
 export function Stat({ label, before, after, note }: { label: string; before: string; after: string; note?: string }) {
   return (
-    <div className="rounded-[20px] border border-line bg-surface-solid p-4 shadow-card">
-      <p className="text-[12.5px] font-semibold tracking-wide text-muted uppercase">{label}</p>
+    <div className="rounded-xl border border-line bg-surface-solid p-4 shadow-card">
+      <p className="text-[13px] font-medium text-muted">{label}</p>
       <p className="tabular mt-2 flex items-baseline gap-2 text-ink">
         <span className="text-[17px] text-muted line-through decoration-1">{before}</span>
         <span className="text-[13px] text-muted">→</span>
-        <span className="text-[30px] leading-none font-extrabold text-accent-deep">{after}</span>
+        <span className="text-[30px] leading-none font-semibold text-accent">{after}</span>
       </p>
       {note && <p className="mt-2 text-[12.5px] text-muted">{note}</p>}
     </div>
@@ -116,7 +116,7 @@ export function Segmented<T extends string>({
   label: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap rounded-xl border border-line bg-sunken p-1">
+    <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap rounded-lg border border-line bg-sunken p-1">
       {options.map((o) => (
         <button
           key={o.value}
@@ -124,8 +124,8 @@ export function Segmented<T extends string>({
           role="radio"
           aria-checked={value === o.value}
           onClick={() => onChange(o.value)}
-          className={`rounded-lg px-3 py-1.5 text-[13px] font-semibold transition-colors ${
-            value === o.value ? "bg-surface-solid text-accent-deep shadow-card" : "text-muted hover:text-ink"
+          className={`rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+            value === o.value ? "bg-accent text-white" : "text-muted hover:text-ink"
           }`}
         >
           {o.label}
@@ -151,11 +151,11 @@ export function Button({
   className?: string;
 }) {
   const styles = {
-    dark: "bg-ink text-bg hover:opacity-90",
+    dark: "bg-nav text-white hover:bg-ink",
     light: "bg-surface-solid text-ink border border-line hover:border-accent",
-    accent: "accent-grad accent-glow text-white hover:opacity-95",
+    accent: "bg-accent text-white hover:bg-accent-deep",
   }[tone];
-  const cls = `inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[14px] font-semibold shadow-card transition disabled:opacity-50 ${styles} ${className}`;
+  const cls = `inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[14px] font-medium shadow-card transition disabled:opacity-50 ${styles} ${className}`;
   if (href) {
     return (
       <Link href={href} className={cls}>

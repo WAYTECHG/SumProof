@@ -43,7 +43,7 @@ export function QuestionPicker({
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-haspopup="listbox"
-          className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl border border-line bg-surface-solid px-4 py-3 text-left shadow-card hover:border-accent"
+          className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-line bg-surface-solid px-4 py-3 text-left shadow-card hover:border-accent"
         >
           <Search size={18} className="shrink-0 text-accent" />
           <span className="min-w-0 flex-1">
@@ -54,16 +54,16 @@ export function QuestionPicker({
           </span>
           <ChevronDown size={18} className="shrink-0 text-muted" />
         </button>
-        <button type="button" aria-label="Previous question" onClick={() => step(-1)} className="grid w-11 place-items-center rounded-2xl border border-line bg-surface-solid text-ink shadow-card hover:border-accent">
+        <button type="button" aria-label="Previous question" onClick={() => step(-1)} className="grid w-11 place-items-center rounded-xl border border-line bg-surface-solid text-ink shadow-card hover:border-accent">
           <ChevronLeft size={18} />
         </button>
-        <button type="button" aria-label="Next question" onClick={() => step(1)} className="grid w-11 place-items-center rounded-2xl border border-line bg-surface-solid text-ink shadow-card hover:border-accent">
+        <button type="button" aria-label="Next question" onClick={() => step(1)} className="grid w-11 place-items-center rounded-xl border border-line bg-surface-solid text-ink shadow-card hover:border-accent">
           <ChevronRight size={18} />
         </button>
       </div>
 
       {open && (
-        <div className="absolute top-full right-0 left-0 z-30 mt-2 rounded-2xl border border-line bg-surface-solid p-3 shadow-card">
+        <div className="absolute top-full right-0 left-0 z-30 mt-2 rounded-xl border border-line bg-surface-solid p-3 shadow-card">
           <div className="mb-2 flex flex-wrap gap-2">
             <label htmlFor="question-filter" className="relative min-w-[200px] flex-1">
               <span className="sr-only">Filter questions</span>

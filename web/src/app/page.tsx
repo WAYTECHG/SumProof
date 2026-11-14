@@ -48,7 +48,7 @@ export default function Overview() {
         meta="Reads receipt photos and checks that the numbers add up · finds the page in a real SEC filing that answers an analyst's question · one 8 GB laptop GPU"
         right={
           <>
-            <Button tone="dark" href="/receipts/0/">
+            <Button tone="accent" href="/receipts/0/">
               Open a receipt <ArrowRight size={16} />
             </Button>
             <Button href="/search/">Search filings</Button>
@@ -65,7 +65,7 @@ export default function Overview() {
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <Card title="Receipt reader results" icon={<ReceiptText size={18} />} action={<Pill tone="warn">{flagged} sent to review</Pill>}>
-          <div className="relative overflow-x-auto rounded-2xl border border-line bg-surface-solid">
+          <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
             <table className="w-full text-[13px]">
               <thead>
                 <tr className="border-b border-line text-left text-[11.5px] tracking-wide text-muted uppercase">
@@ -99,7 +99,7 @@ export default function Overview() {
           </p>
         </Card>
 
-        <Card title="Retrieval ladder" icon={<FileSearch size={18} />} action={<span className="tabular text-[22px] font-extrabold text-accent-deep">{m["5_dense_routed_reranked"]["R@5"].toFixed(2)}<span className="ml-1 text-[13px] font-semibold text-muted">Recall@5</span></span>}>
+        <Card title="Retrieval ladder" icon={<FileSearch size={18} />} action={<span className="tabular text-[22px] font-semibold text-accent-deep">{m["5_dense_routed_reranked"]["R@5"].toFixed(2)}<span className="ml-1 text-[13px] font-semibold text-muted">Recall@5</span></span>}>
           <BarBreakdown
             label="Recall@5 for each retrieval step"
             bars={LADDER.map((s) => ({ label: s.label, value: m[s.key]["R@5"], highlight: s.key === "5_dense_routed_reranked" }))}
@@ -115,7 +115,7 @@ export default function Overview() {
         </Card>
 
         <Card title="Vector stores" icon={<Database size={18} />} action={<Pill tone="good">identical top-10 · 150/150</Pill>}>
-          <div className="relative overflow-x-auto rounded-2xl border border-line bg-surface-solid">
+          <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
             <table className="w-full min-w-[440px] text-[13.5px]">
               <thead>
                 <tr className="border-b border-line text-left text-[11.5px] tracking-wide text-muted uppercase">
@@ -150,8 +150,8 @@ export default function Overview() {
       <h2 className="mt-7 mb-3 text-[16px] font-bold text-ink">Explore the results</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {SCREENS.map(({ href, icon: Icon, title, text }) => (
-          <Link key={href} href={href} className="group rounded-[20px] border border-line bg-surface-solid p-4 shadow-card transition hover:border-accent">
-            <span className="accent-grad grid h-9 w-9 place-items-center rounded-xl text-white">
+          <Link key={href} href={href} className="group rounded-xl border border-line bg-surface-solid p-4 shadow-card transition hover:border-accent">
+            <span className="accent-fill grid h-9 w-9 place-items-center rounded-xl text-white">
               <Icon size={18} />
             </span>
             <p className="mt-3 flex items-center gap-1.5 text-[15px] font-bold text-ink">

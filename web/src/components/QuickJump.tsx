@@ -111,7 +111,7 @@ export function QuickJump() {
         Ctrl K
       </kbd>
       {open && results.length > 0 && (
-        <ul id="quick-jump-list" role="listbox" className="absolute top-12 right-0 left-0 z-30 overflow-hidden rounded-2xl border border-line bg-surface-solid shadow-card">
+        <ul id="quick-jump-list" role="listbox" className="absolute top-12 right-0 left-0 z-30 overflow-hidden rounded-xl border border-line bg-surface-solid shadow-card">
           {results.map((r, i) => (
             <li key={r.key} role="option" aria-selected={i === active}>
               <button

@@ -78,7 +78,7 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
                 <Pill tone="warn">No company named · searched all 84 filings</Pill>
               )}
             </div>
-            <div className="mt-4 rounded-2xl border border-line bg-surface-solid p-3.5">
+            <div className="mt-4 rounded-xl border border-line bg-surface-solid p-3.5">
               <button
                 type="button"
                 onClick={() => setShowAnswer((s) => !s)}
@@ -125,12 +125,12 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
                         type="button"
                         onClick={() => setSelected(h.row)}
                         aria-pressed={active}
-                        className={`w-full rounded-2xl border p-3.5 text-left transition ${
+                        className={`w-full rounded-xl border p-3.5 text-left transition ${
                           active ? "border-accent bg-sunken shadow-card" : "border-line bg-surface-solid hover:border-accent/60"
                         }`}
                       >
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="accent-grad grid h-6 w-6 place-items-center rounded-full text-[12px] font-bold text-white">{k + 1}</span>
+                          <span className="accent-fill grid h-6 w-6 place-items-center rounded-full text-[12px] font-bold text-white">{k + 1}</span>
                           <span className="text-[13.5px] font-bold text-ink">{prettyDoc(p.doc)}</span>
                           <span className="text-[12.5px] text-muted">page {p.page + 1}</span>
                           {h.gold && (
@@ -164,7 +164,7 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
             >
               {page ? (
                 <>
-                  <div className="max-h-[620px] overflow-y-auto rounded-2xl border border-line bg-surface-solid p-5 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink">
+                  <div className="max-h-[620px] overflow-y-auto rounded-xl border border-line bg-surface-solid p-5 font-mono text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink">
                     <Highlight text={page.text} terms={terms} />
                   </div>
                   <div className="mt-3 flex flex-wrap items-center gap-3 text-[12.5px] text-muted">

@@ -32,4 +32,3 @@ npm run build      # static site in out/
 
 Import the GitHub repository, set **Root Directory** to `web`, keep the Next.js preset, and deploy. The site is fully static (`output: "export"`), so the free Hobby plan is enough.
 
-`?theme=light` or `?theme=dark` in any URL sets the theme, which is handy for screenshots.
