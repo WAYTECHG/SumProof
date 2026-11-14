@@ -1,6 +1,73 @@
+<div align="center">
+
+<img src="docs/logo.svg" width="84" alt="SumProof logo">
+
 # SumProof
 
-**Receipt AI and financial filing search: reads receipts, checks that the numbers add up, and finds the page in an annual report that answers an analyst's question. Real data, open models, zero cost.**
+**Receipt AI that checks the numbers add up, and evidence search over real SEC filings.**<br>
+Real data · open models · one 8 GB laptop GPU · $0
+
+<p>
+  <img alt="Receipt field F1 0.79 to 0.94" src="https://img.shields.io/badge/receipt%20field%20F1-0.79%20%E2%86%92%200.94-a47864?style=for-the-badge">
+  <img alt="Fully correct receipts 6 to 62 of 100" src="https://img.shields.io/badge/fully%20correct-6%20%E2%86%92%2062%20%2F%20100-a47864?style=for-the-badge">
+  <img alt="FinanceBench Recall@5 0.53 to 0.71" src="https://img.shields.io/badge/Recall%405-0.53%20%E2%86%92%200.71-6f4e3d?style=for-the-badge">
+</p>
+
+<p>
+  <b>Models</b><br>
+  <img alt="Qwen3.5-4B" src="https://img.shields.io/badge/Qwen3.5--4B-vision--language-c8915c?style=flat-square">
+  <img alt="Qwen3-Embedding-0.6B" src="https://img.shields.io/badge/Qwen3--Embedding-0.6B-c8915c?style=flat-square">
+  <img alt="Qwen3-Reranker-0.6B" src="https://img.shields.io/badge/Qwen3--Reranker-0.6B-c8915c?style=flat-square">
+</p>
+
+<p>
+  <b>Machine learning</b><br>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white">
+  <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white">
+  <img alt="Hugging Face Transformers" src="https://img.shields.io/badge/Transformers-FFD21E?style=flat-square&logo=huggingface&logoColor=black">
+  <img alt="PEFT QLoRA" src="https://img.shields.io/badge/PEFT-QLoRA-FFD21E?style=flat-square&logo=huggingface&logoColor=black">
+  <img alt="bitsandbytes 4-bit" src="https://img.shields.io/badge/bitsandbytes-4--bit%20NF4-555555?style=flat-square">
+  <img alt="Sentence Transformers" src="https://img.shields.io/badge/Sentence%20Transformers-555555?style=flat-square">
+  <img alt="TensorBoard" src="https://img.shields.io/badge/TensorBoard-FF6F00?style=flat-square&logo=tensorflow&logoColor=white">
+</p>
+
+<p>
+  <b>Retrieval and storage</b><br>
+  <img alt="FAISS" src="https://img.shields.io/badge/FAISS-0467DF?style=flat-square&logo=meta&logoColor=white">
+  <img alt="PostgreSQL with pgvector" src="https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?style=flat-square&logo=postgresql&logoColor=white">
+  <img alt="BM25" src="https://img.shields.io/badge/BM25-rank__bm25-555555?style=flat-square">
+  <img alt="PyMuPDF" src="https://img.shields.io/badge/PyMuPDF-PDF%20pages-555555?style=flat-square">
+</p>
+
+<p>
+  <b>Interface</b><br>
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white">
+  <img alt="React" src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB">
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
+  <img alt="Vercel" src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white">
+</p>
+
+<p>
+  <b>Data and environment</b><br>
+  <img alt="CORD-v2 receipts" src="https://img.shields.io/badge/data-CORD--v2%20receipts-6f4e3d?style=flat-square">
+  <img alt="FinanceBench" src="https://img.shields.io/badge/data-FinanceBench%20SEC%20filings-6f4e3d?style=flat-square">
+  <img alt="WSL2 Ubuntu" src="https://img.shields.io/badge/WSL2-Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white">
+  <img alt="NVIDIA RTX 4060 8 GB" src="https://img.shields.io/badge/RTX%204060-8%20GB-76B900?style=flat-square&logo=nvidia&logoColor=white">
+  <img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-555555?style=flat-square">
+</p>
+
+<p>
+  <a href="#architecture">Architecture</a> ·
+  <a href="#interface">Interface</a> ·
+  <a href="#results">Results</a> ·
+  <a href="#run-it">Run it</a> ·
+  <a href="#data-and-licences">Data &amp; licences</a>
+</p>
+
+</div>
+
+## Highlights
 
 - **Receipt extraction:** Qwen3.5-4B (Feb 2026), a natively multimodal model, fine-tuned with QLoRA on one 8 GB laptop GPU. Fine-tuning raised field F1 from **0.79 to 0.94** and fully correct receipts from **6 to 62 out of 100**.
 - **Accounting checker:** sample several readings and keep the one that obeys the receipt's arithmetic (items sum to the subtotal, subtotal + tax − discount = total, cash − change = total). Readings that break a rule go to human review.
