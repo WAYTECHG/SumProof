@@ -57,8 +57,9 @@ Real data · open models · one 8 GB laptop GPU · $0
 - **Receipt extraction:** Qwen3.5-4B (Feb 2026), a natively multimodal model, fine-tuned with QLoRA on one 8 GB laptop GPU. Fine-tuning raised field F1 from **0.79 to 0.94** and fully correct receipts from **6 to 62 out of 100**.
 - **Accounting checker:** sample several readings and keep the one that obeys the receipt's arithmetic (items sum to the subtotal, subtotal + tax − discount = total, cash − change = total). Readings that break a rule go to human review.
 - **Financial retrieval:** search over **12,013 pages of 84 real SEC filings** (FinanceBench), scored against evidence pages labelled by financial analysts. Qwen3-Embedding + company/year routing + Qwen3-Reranker: **Recall@5 0.53 → 0.71**.
+- **Local agent (MCP + Ollama):** SumProof's tools served over the Model Context Protocol and used by Qwen3.5-4B in Ollama: 100% on 22 receipt tasks; on calculation questions it matches plain RAG, because the 4B model calls the calculator in only 4% of tasks.
 - **Vector storage:** FAISS and PostgreSQL + pgvector (with the routing as a SQL filter), verified to return identical results.
-- **Answer generation (RAG):** Qwen3.5-4B answers the 150 questions from the retrieved pages with a citation, graded against the analysts' answers. RAG raises correct answers from **8% to 35%**; gating the pages by reranker confidence cuts prompt tokens by **28%** with no statistically significant accuracy change.
+- **Answer generation (RAG):** Qwen3.5-4B answers the 150 questions from the retrieved pages with a citation, graded against the analysts' answers. RAG raises correct answers from **8% to 35%**; gating the pages by reranker confidence cuts prompt tokens by **28%** with no statistically significant accuracy change. On calculation questions, a **thinking budget** raises accuracy from **38% to 68%** and cuts wrong answers from **60% to 14%**.
 
 ## Architecture
 
@@ -162,13 +163,43 @@ Qwen3.5-4B (4-bit, no thinking) answers every question four ways, from the same 
 - **Grading:** questions whose reference is one figure are graded by an exact rule (the stated figure within 1%, units aware); the other 356 answers are graded by **IBM Granite 4.2 8B**, a different model family from the generator, so no model grades its own writing. On the 161 answers both graded, they agree **92.5%**. A hand check of 20 Granite grades agreed with 17; the 3 disagreements were all Granite being too strict, so the explanation-question scores are conservative.
 - An early version of the rule accepted any matching number in the answer, including numbers from the working; checking it against the model grader (80% agreement) exposed this, and grading the stated figure raised agreement to 92.5%.
 
+### Thinking budget: how much reasoning is worth paying for
+
+The ceiling row above shows that the model, not retrieval, is now the bottleneck: many metric questions need multi-step arithmetic. Qwen3.5 can reason before answering, but left alone a 4B model sometimes reasons for over 6,000 tokens and never answers. **Budget forcing** (Muennighoff et al., 2025, *s1: Simple test-time scaling*) caps the reasoning: when the budget runs out, the reasoning is closed and the model must answer. Run through Ollama on the 50 metric questions, same top-5 pages, greedy decoding:
+
+| Thinking budget | Correct | Wrong | Refused | Thinking tokens (mean) | Seconds / question |
+|---|---|---|---|---|---|
+| None | 38% | 60% | 2% | 0 | 4 |
+| 1,024 tokens | 50% | 34% | 16% | 1,022 | 18 |
+| 2,048 tokens | 54% | 28% | 18% | 1,974 | 34 |
+| **4,096 tokens** | **68%** | **14%** | 18% | 3,265 | 54 |
+
+- **Every budget helps, and the gain is not noise:** none → 4,096 fixed 15 questions and broke none (McNemar exact p = 0.0001); 2,048 → 4,096 fixed 7 and broke none (p = 0.016).
+- **Wrong answers fall from 60% to 14%.** With room to reason, the model notices when the pages lack something it needs (for example the prior year's inventory for an average) and says "Not found" instead of inventing a number. For a finance tool, a confident wrong figure is the costliest failure.
+- **The cost is time:** 13 times slower at 4,096 tokens, and 20 of the 50 questions still used the whole budget, so larger budgets may help further.
+- All 50 references are single figures, so every answer here is graded by the exact rule; no model judge is involved. The reasoning is generated once and cut at each smaller budget, so every budget sees the same thinking prefix.
+
+### Local agent: MCP tools used by Qwen3.5-4B in Ollama
+
+`sumproof/agent/server.py` is an MCP server (Model Context Protocol, `mcp` 2.3) with five tools: `search_filings` (the routed + reranked retrieval above), `read_page`, `calculate` (exact arithmetic, refuses anything but maths), `list_receipts` and `get_receipt` (the fine-tuned model's readings and the accounting checks). Any MCP client can use it; `sumproof/agent/agent.py` connects Qwen3.5-4B in Ollama over stdio and loops until the model answers.
+
+| Condition | Receipt tasks (22, exact answers) | FinanceBench metric questions (50) | Tasks that called `calculate` |
+|---|---|---|---|
+| Agent, all tools | **100%** | 40% | 4% |
+| Agent without `calculate` | 95.5% | 38% | n/a |
+
+- **Lookups work:** the agent picks the right tool and answers every receipt task, about 1 s each.
+- **On calculations, tools did not help, because the model rarely used them.** Told to use `calculate` for every arithmetic step, the 4B model called it in 4% of tasks; asked for a ratio, it typically reads the page and returns a raw figure. The agent matches plain top-5 RAG on the same 50 questions (40%).
+- **Reasoning beat tools:** the thinking budget lifted the same questions to 68%. For a small model, room to think matters far more than tools it does not decide to call; the next step is to combine both (thinking agent), or to train tool use (GRPO with the checker as reward).
+- Building the agent surfaced two design points: MCP 2.x hides tool exceptions from the model by default, so input errors are raised as `ToolError` to let the model correct itself; and tools return parsed numbers, because "60.000" on an Indonesian receipt means sixty thousand.
+
 ## Run it
 
 Receipt training and inference need Linux for Qwen3.5's Triton kernels (WSL2 on Windows works: `scripts/setup_wsl.sh`). Retrieval runs on Windows or Linux; pgvector setup is `scripts/setup_pgvector.sh`.
 
 ```bash
 pip install -r requirements.txt                   # retrieval, vector stores, tests
-pytest -q                                         # 34 tests, no GPU or database needed
+pytest -q                                         # 39 tests, no GPU or database needed
 
 # Financial retrieval
 python -m sumproof.rag.download_financebench      # questions + 84 filings (~166 MB) -> 12,013 pages
@@ -178,6 +209,9 @@ python -m sumproof.rag.pgstore load && python -m sumproof.rag.pgstore bench   # 
 python -m sumproof.rag.answer generate            # GPU: 600 answers (4 settings x 150), ~50 min
 python -m sumproof.rag.answer judge               # GPU: grading with Granite 4.2 8B, ~40 min
 python -m sumproof.rag.answer report              # the answer-generation table
+python -m sumproof.rag.think_budget               # Ollama (qwen3.5:4b): thinking budgets 0 / 1k / 2k / 4k, ~1 h
+python -m sumproof.agent.agent "Which receipts need review?"   # the MCP agent (needs: ollama pull qwen3.5:4b)
+python -m sumproof.agent.eval run && python -m sumproof.agent.eval report   # 144 agent runs, ~1.5 h
 
 # Receipts (Linux / WSL2, 8 GB GPU; CORD-v2 downloads automatically)
 pip install -r requirements-gpu.txt               # after installing PyTorch with CUDA

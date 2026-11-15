@@ -8,12 +8,14 @@ reference answer. Using a different family avoids a model grading its own writin
 Settings (each question is answered once per setting):
   closed     no pages: what the model "knows" (and how often it makes numbers up)
   top5       the 5 best reranked pages: standard RAG
+  top5_think the same pages with Qwen3.5's thinking mode on (reasons before answering; slow, so it
+             is run on the 50 metric questions, where calculation matters most: --type metrics-generated)
   adaptive   confidence-gated context: softmax the reranker scores of the top 5 pages and keep
              the best pages until they hold 90% of the probability (1 to 5 pages). The 90% is
              fixed in advance, like nucleus sampling, not tuned on these questions.
   oracle     the analysts' own evidence pages: the ceiling if retrieval were perfect
 
-  python -m sumproof.rag.answer generate [--limit N] [--modes closed,top5,adaptive,oracle]
+  python -m sumproof.rag.answer generate [--limit N] [--modes closed,top5,adaptive,oracle] [--type T]
   python -m sumproof.rag.answer judge    [--limit N]
   python -m sumproof.rag.answer report
 
@@ -35,7 +37,8 @@ ANSWERS = Path("results/rag_answers.jsonl")
 JUDGEMENTS = Path("results/rag_judgements.jsonl")
 SUMMARY = Path("results/rag_answer_eval.json")
 JUDGE_MODEL = "ibm-granite/granite-4.2-8b"
-MODES = ("closed", "top5", "adaptive", "oracle")
+MODES = ("closed", "top5", "top5_think", "adaptive", "oracle", "think_0", "think_1024", "think_2048", "think_4096")
+THINK_TOKENS = 3072  # reasoning budget per answer in thinking mode
 TOP_K = 5
 MASS = 0.9
 PAGE_CHARS = 6000  # a long 10-K page is ~10k characters; the cap keeps 5 pages under ~8k tokens
@@ -90,7 +93,7 @@ def select_pages(mode: str, rank: dict) -> list[int]:
     """Page rows (into pages.parquet) given to the model in each setting."""
     if mode == "closed":
         return []
-    if mode == "top5":
+    if mode in ("top5", "top5_think"):
         return rank["reranked"][:TOP_K]
     if mode == "adaptive":
         return rank["reranked"][: adaptive_k(rank["reranker_scores"])]
@@ -215,14 +218,15 @@ def _load_data():
 
 # ---------- step 1: answers (Qwen3.5-4B) ----------
 
-def generate(modes: list[str], limit: int | None) -> None:
+def generate(modes: list[str], limit: int | None, qtype: str | None = None) -> None:
     import torch
 
     from ..receipts import vlm
 
     q, pages, rankings = _load_data()
     done = {(r["i"], r["mode"]) for r in _load_jsonl(ANSWERS)}
-    todo = [(i, m) for m in modes for i in range(len(q))[:limit] if (i, m) not in done]
+    keep = [i for i in range(len(q))[:limit] if qtype is None or q.question_type.iloc[i] == qtype]
+    todo = [(i, m) for m in modes for i in keep if (i, m) not in done]
     print(f"{len(todo)} answers to write ({len(done)} already done)")
     if not todo:
         return
@@ -232,13 +236,19 @@ def generate(modes: list[str], limit: int | None) -> None:
         rows = select_pages(mode, rankings[i])
         ctx = [(pages.doc_name.iloc[r], int(pages.page.iloc[r]), pages.text.iloc[r]) for r in rows]
         msgs = build_messages(q.question.iloc[i], ctx)
-        chat = processor.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+        think = mode.endswith("_think")
+        chat = processor.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=think)
         inputs = processor(text=[chat], return_tensors="pt").to(model.device)
         t0 = time.perf_counter()
         with torch.inference_mode():
-            out = model.generate(**inputs, max_new_tokens=384, do_sample=False)
+            out = model.generate(**inputs, max_new_tokens=THINK_TOKENS if think else 384, do_sample=False)
         gen = out[0, inputs["input_ids"].shape[1]:]
         text = processor.decode(gen, skip_special_tokens=True).strip()
+        extra = {}
+        if think:  # keep only the final answer; an answer cut off mid-reasoning counts as no answer
+            closed = "</think>" in text
+            extra = {"reasoning_chars": len(text.split("</think>")[0]), "truncated": not closed}
+            text = text.split("</think>")[-1].strip() if closed else ""
         rec = {
             "i": i,
             "mode": mode,
@@ -247,6 +257,7 @@ def generate(modes: list[str], limit: int | None) -> None:
             "prompt_tokens": int(inputs["input_ids"].shape[1]),
             "answer_tokens": int(gen.shape[0]),
             "seconds": round(time.perf_counter() - t0, 2),
+            **extra,
         }
         _append(ANSWERS, rec)
         print(f"{n}/{len(todo)} q{i} {mode}: {rec['prompt_tokens']} tok in, {rec['seconds']}s | {text[:90]!r}", flush=True)
@@ -383,10 +394,11 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("step", choices=["generate", "judge", "report"])
     ap.add_argument("--limit", type=int, default=None, help="only the first N questions (smoke test)")
-    ap.add_argument("--modes", default=",".join(MODES))
+    ap.add_argument("--modes", default="closed,top5,adaptive,oracle")
+    ap.add_argument("--type", default=None, help="only one question type, e.g. metrics-generated")
     a = ap.parse_args()
     if a.step == "generate":
-        generate([m for m in a.modes.split(",") if m], a.limit)
+        generate([m for m in a.modes.split(",") if m], a.limit, a.type)
     elif a.step == "judge":
         judge(a.limit)
     else:

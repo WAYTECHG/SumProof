@@ -14,3 +14,7 @@ pgvector
 matplotlib
 tensorboard
 pytest
+
+# Local agent: MCP server + Ollama client (python -m sumproof.agent.agent)
+mcp>=2.3
+ollama>=0.6.3
