@@ -1,0 +1,86 @@
+{
+  "judge": "ibm-granite/granite-4.2-8b",
+  "generator": "Qwen/Qwen3.5-4B (4-bit, no thinking)",
+  "modes": {
+    "closed": {
+      "n": 150,
+      "correct": 0.08,
+      "wrong": 0.587,
+      "refused": 0.333,
+      "ungraded": 0,
+      "pages_mean": 0.0,
+      "prompt_tokens_mean": 113,
+      "answer_tokens_mean": 51,
+      "seconds_mean": 3.43,
+      "context_has_evidence_page": null,
+      "correct_answers_citing_evidence_page": null,
+      "correct_by_question_type": {
+        "domain-relevant": 0.14,
+        "metrics-generated": 0.0,
+        "novel-generated": 0.1
+      }
+    },
+    "top5": {
+      "n": 150,
+      "correct": 0.353,
+      "wrong": 0.593,
+      "refused": 0.053,
+      "ungraded": 0,
+      "pages_mean": 5.0,
+      "prompt_tokens_mean": 5089,
+      "answer_tokens_mean": 78,
+      "seconds_mean": 7.47,
+      "context_has_evidence_page": 0.713,
+      "correct_answers_citing_evidence_page": 0.692,
+      "correct_by_question_type": {
+        "domain-relevant": 0.28,
+        "metrics-generated": 0.4,
+        "novel-generated": 0.38
+      }
+    },
+    "adaptive": {
+      "n": 150,
+      "correct": 0.327,
+      "wrong": 0.567,
+      "refused": 0.1,
+      "ungraded": 1,
+      "pages_mean": 3.48,
+      "prompt_tokens_mean": 3689,
+      "answer_tokens_mean": 69,
+      "seconds_mean": 6.04,
+      "context_has_evidence_page": 0.64,
+      "correct_answers_citing_evidence_page": 0.75,
+      "correct_by_question_type": {
+        "domain-relevant": 0.28,
+        "metrics-generated": 0.36,
+        "novel-generated": 0.34
+      }
+    },
+    "oracle": {
+      "n": 150,
+      "correct": 0.44,
+      "wrong": 0.513,
+      "refused": 0.047,
+      "ungraded": 0,
+      "pages_mean": 1.25,
+      "prompt_tokens_mean": 1320,
+      "answer_tokens_mean": 76,
+      "seconds_mean": 5.37,
+      "context_has_evidence_page": 1.0,
+      "correct_answers_citing_evidence_page": 1.0,
+      "correct_by_question_type": {
+        "domain-relevant": 0.42,
+        "metrics-generated": 0.44,
+        "novel-generated": 0.46
+      }
+    }
+  },
+  "judge_vs_numeric_rule": {
+    "answers": 161,
+    "agreement": 0.925
+  },
+  "graded_by": {
+    "rule": 164,
+    "judge": 356
+  }
+}

@@ -58,6 +58,7 @@ Real data · open models · one 8 GB laptop GPU · $0
 - **Accounting checker:** sample several readings and keep the one that obeys the receipt's arithmetic (items sum to the subtotal, subtotal + tax − discount = total, cash − change = total). Readings that break a rule go to human review.
 - **Financial retrieval:** search over **12,013 pages of 84 real SEC filings** (FinanceBench), scored against evidence pages labelled by financial analysts. Qwen3-Embedding + company/year routing + Qwen3-Reranker: **Recall@5 0.53 → 0.71**.
 - **Vector storage:** FAISS and PostgreSQL + pgvector (with the routing as a SQL filter), verified to return identical results.
+- **Answer generation (RAG):** Qwen3.5-4B answers the 150 questions from the retrieved pages with a citation, graded against the analysts' answers. RAG raises correct answers from **8% to 35%**; gating the pages by reranker confidence cuts prompt tokens by **28%** with no statistically significant accuracy change.
 
 ## Architecture
 
@@ -143,19 +144,40 @@ What the ablation shows:
 - pgvector's 95th-percentile HNSW latency (27 ms) is higher than its median because Postgres's default 128 MB `shared_buffers` cannot hold the 94 MB index plus table data; raising it is the next tuning step. Postgres's planner also prefers a full scan at this table size, so the benchmark forces the index to measure it.
 - At this scale exact search is fast enough and never misses a page, so the evaluation uses exact search; HNSW matters at millions of pages.
 
+### Answer generation: FinanceBench (150 analyst questions)
+
+Qwen3.5-4B (4-bit, no thinking) answers every question four ways, from the same retrieved pages as above, and must cite the page it used or reply "Not found". No model was trained for this step.
+
+| Context given to the model | Correct | Wrong | Refused | Evidence page in context | Prompt tokens |
+|---|---|---|---|---|---|
+| None (closed book) | 8.0% | 58.7% | 33.3% | n/a | 113 |
+| **Top 5 reranked pages (RAG)** | **35.3%** | 59.3% | 5.3% | 71% | 5,089 |
+| **Confidence-gated pages (1 to 5)** | 32.7% | 56.7% | 10.0% | 64% | **3,689 (−28%)** |
+| The analysts' evidence pages (ceiling) | 44.0% | 51.3% | 4.7% | 100% | 1,320 |
+
+- **Closed book, the model invents answers:** 59% wrong and 0% correct on the metric questions, although it was told to say "I don't know". The filings are essential.
+- **Confidence-gated context:** softmax the reranker scores of the top 5 pages and keep pages until they hold 90% of the probability (fixed in advance, like nucleus sampling, not tuned on these questions). On average 3.5 pages instead of 5. Paired against top 5: 11 questions got worse and 7 better (McNemar exact p = 0.48, not significant). When gating drops the evidence page, the model more often says "Not found" (refusals 5% → 10%) instead of guessing.
+- **The generator is now the bottleneck:** even with the analysts' own pages a 4B model answers 44%, because most metric questions need multi-step arithmetic (ratios, averages). Retrieval costs 8.7 points; reasoning costs far more.
+- **Citations:** 69% of correct RAG answers cite one of the analysts' evidence pages.
+- **Grading:** questions whose reference is one figure are graded by an exact rule (the stated figure within 1%, units aware); the other 356 answers are graded by **IBM Granite 4.2 8B**, a different model family from the generator, so no model grades its own writing. On the 161 answers both graded, they agree **92.5%**. A hand check of 20 Granite grades agreed with 17; the 3 disagreements were all Granite being too strict, so the explanation-question scores are conservative.
+- An early version of the rule accepted any matching number in the answer, including numbers from the working; checking it against the model grader (80% agreement) exposed this, and grading the stated figure raised agreement to 92.5%.
+
 ## Run it
 
 Receipt training and inference need Linux for Qwen3.5's Triton kernels (WSL2 on Windows works: `scripts/setup_wsl.sh`). Retrieval runs on Windows or Linux; pgvector setup is `scripts/setup_pgvector.sh`.
 
 ```bash
 pip install -r requirements.txt                   # retrieval, vector stores, tests
-pytest -q                                         # 27 tests, no GPU or database needed
+pytest -q                                         # 34 tests, no GPU or database needed
 
 # Financial retrieval
 python -m sumproof.rag.download_financebench      # questions + 84 filings (~166 MB) -> 12,013 pages
 python -m sumproof.rag.financebench               # the five-step table
 python -m sumproof.rag.bench_faiss                # FAISS exact vs HNSW
 python -m sumproof.rag.pgstore load && python -m sumproof.rag.pgstore bench   # pgvector
+python -m sumproof.rag.answer generate            # GPU: 600 answers (4 settings x 150), ~50 min
+python -m sumproof.rag.answer judge               # GPU: grading with Granite 4.2 8B, ~40 min
+python -m sumproof.rag.answer report              # the answer-generation table
 
 # Receipts (Linux / WSL2, 8 GB GPU; CORD-v2 downloads automatically)
 pip install -r requirements-gpu.txt               # after installing PyTorch with CUDA
@@ -174,7 +196,7 @@ cd web && npm install && npm run dev              # open http://localhost:3000 a
 sumproof/receipts/   schema, amounts (money parsing), consistency (accounting checker), metrics,
                      vlm (Qwen3.5 loading, sampling, scoring), train_qlora, evaluate, plot_training
 sumproof/rag/        download_financebench, financebench (router + five-step evaluation), fusion (BM25 tokens, RRF),
-                     index (FAISS), pgstore (PostgreSQL + pgvector), bench_faiss
+                     index (FAISS), pgstore (PostgreSQL + pgvector), bench_faiss, answer (generation + grading)
 sumproof/api.py      live reader for the interface (FastAPI: POST a photo, get the fields)
 scripts/             setup_wsl.sh, setup_pgvector.sh, run_receipts.sh, serve.sh, wsl.sh
 results/             summary JSON for every number in this README
