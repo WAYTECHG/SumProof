@@ -10,7 +10,10 @@ Writes:
                        training and validation curves)
   questions.json       index of the 150 FinanceBench questions
   q/<i>.json           per question: routed filings, top-10 of every retrieval method, the analysts'
-                       evidence pages and reference answer, and the text of every page shown
+                       evidence pages and reference answer, the text of every page shown, and the
+                       generated answer in each context setting with its grade
+
+  python -m sumproof.export_web dashboard questions   # only these parts (no `datasets` needed)
 Nothing is recomputed: these are the outputs the README numbers were measured on.
 """
 
@@ -21,6 +24,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from .rag.answer import ANSWERS, JUDGEMENTS, SUMMARY, outcomes, parse_citations
 from .rag.financebench import parse_doc_name
 from .receipts.consistency import check
 from .receipts.schema import Receipt, parse_model_output
@@ -101,6 +105,8 @@ def export_dashboard() -> None:
         "train_log": load("runs/sft/train_log.json"),
         "val_log": load("runs/sft/val_log.json"),
     }
+    if SUMMARY.exists():
+        dash["answers"] = load(SUMMARY)
     (OUT / "dashboard.json").write_text(json.dumps(dash), encoding="utf-8")
     print("dashboard.json written")
 
@@ -110,6 +116,15 @@ def export_questions() -> None:
     pages = pd.read_parquet(FB / "pages.parquet")
     rankings = json.loads((RESULTS / "financebench_rankings.json").read_text(encoding="utf-8"))
     (OUT / "q").mkdir(parents=True, exist_ok=True)
+    answers = _rows(ANSWERS) if ANSWERS.exists() else []
+    result = outcomes([str(a) for a in q.answer], answers, _rows(JUDGEMENTS) if JUDGEMENTS.exists() else [])
+    generated: dict[int, dict] = {}
+    for a in answers:
+        cited = [a["rows"][k - 1] for k in parse_citations(a["answer"]) if 1 <= k <= len(a["rows"])]
+        generated.setdefault(a["i"], {})[a["mode"]] = {
+            "text": a["answer"], "rows": a["rows"], "cited": cited, "outcome": result[(a["i"], a["mode"])],
+            "prompt_tokens": a["prompt_tokens"],
+        }
 
     index = []
     for r in rankings:
@@ -137,24 +152,28 @@ def export_questions() -> None:
             "gold": [{"row": int(j), "doc": pages.doc_name.iloc[j], "page": int(pages.page.iloc[j])} for j in sorted(gold)],
             "detected": detected,
             "methods": methods,
+            "generated": generated.get(r["i"], {}),
             "pages": {str(j): {"doc": pages.doc_name.iloc[j], "page": int(pages.page.iloc[j]),
                                "text": pages.text.iloc[j][:PAGE_CHARS]} for j in sorted(shown)},
         }
         (OUT / "q" / f"{r['i']}.json").write_text(json.dumps(detail, ensure_ascii=False), encoding="utf-8")
         first_hit = lambda m: next((k + 1 for k, h in enumerate(methods[m]) if h["gold"]), None)
         index.append({"i": r["i"], "question": row.question, "company": row.company, "type": row.question_type,
-                      "rank": {m: first_hit(m) for m in METHODS}})
+                      "rank": {m: first_hit(m) for m in METHODS},
+                      "outcome": {m: g["outcome"] for m, g in generated.get(r["i"], {}).items()}})
     (OUT / "questions.json").write_text(json.dumps(index, ensure_ascii=False), encoding="utf-8")
     size = sum(p.stat().st_size for p in (OUT / "q").glob("*.json"))
     print(f"questions.json + q/*.json: {len(index)} questions, {size / 1e6:.1f} MB")
 
 
 def main() -> None:
+    import sys
+
+    parts = {"receipts": export_receipts, "dashboard": export_dashboard, "questions": export_questions,
+             "images": export_receipt_images}
     OUT.mkdir(parents=True, exist_ok=True)
-    export_receipts()
-    export_dashboard()
-    export_questions()
-    export_receipt_images()
+    for name in sys.argv[1:] or list(parts):
+        parts[name]()
 
 
 if __name__ == "__main__":

@@ -30,7 +30,21 @@ export type QuestionSummary = {
   company: string;
   type: string;
   rank: Record<Method, number | null>; // first rank of an evidence page in the top 10, or null
+  outcome?: Partial<Record<AnswerMode, Outcome>>;
 };
+
+/** How the generated answer compares with the analysts' reference answer. */
+export type Outcome = "correct" | "wrong" | "refused" | "ungraded";
+export type AnswerMode = "closed" | "top5" | "adaptive" | "oracle";
+
+export type GeneratedAnswer = { text: string; rows: number[]; cited: number[]; outcome: Outcome; prompt_tokens: number };
+
+export const ANSWER_MODES: { key: AnswerMode; label: string; note: string }[] = [
+  { key: "closed", label: "No pages (closed book)", note: "what the model knows" },
+  { key: "top5", label: "Top 5 reranked pages", note: "standard RAG" },
+  { key: "adaptive", label: "Confidence-gated pages", note: "1 to 5 pages" },
+  { key: "oracle", label: "The analysts' evidence pages", note: "ceiling" },
+];
 
 export type Hit = { row: number; gold: boolean; score?: number };
 
@@ -45,6 +59,7 @@ export type QuestionDetail = {
   gold: { row: number; doc: string; page: number }[];
   detected: { company: string; years: number[]; filings: string[] } | null;
   methods: Record<Method, Hit[]>;
+  generated: Partial<Record<AnswerMode, GeneratedAnswer>>;
   pages: Record<string, { doc: string; page: number; text: string }>;
 };
 
@@ -64,6 +79,14 @@ export type Dashboard = {
   faiss: { benchmark: { index: string; efSearch: number | null; ms_per_query: number; "overlap@10_vs_exact": number; "recall@5_gold": number }[] };
   pgvector: Record<string, string | number>;
   train_log: { step: number; epoch: number; loss: number; lr: number }[];
+  answers?: {
+    judge: string;
+    modes: Record<
+      AnswerMode,
+      { correct: number; wrong: number; refused: number; pages_mean: number; prompt_tokens_mean: number; context_has_evidence_page: number | null }
+    >;
+    judge_vs_numeric_rule: { answers: number; agreement: number };
+  };
   val_log: { field_f1: number; total_accuracy: number; epoch: number }[];
 };
 

@@ -302,28 +302,37 @@ def judge(limit: int | None) -> None:
 
 # ---------- step 3: report ----------
 
-def summarize(q_types: list[str], refs: list[str], answers: list[dict], judgements: list[dict], rankings: list[dict]) -> dict:
-    # Rule verdicts are recomputed from the saved answer text, so a change to the rule needs no GPU rerun.
+def regrade(refs: list[str], answers: list[dict], judgements: list[dict]) -> list[dict]:
+    """Recompute rule verdicts from the saved answer text, so a change to the rule needs no GPU rerun."""
     text = {(a["i"], a["mode"]): a["answer"] for a in answers}
-    judgements = [
+    return [
         {**j, "verdict": "CORRECT" if numeric_match(text[(j["i"], j["mode"])], refs[j["i"]]) else "INCORRECT"}
         if j.get("method") == "rule" and (j["i"], j["mode"]) in text
         else j
         for j in judgements
     ]
-    verdict = {(j["i"], j["mode"]): j["verdict"] for j in judgements}
+
+
+def outcomes(refs: list[str], answers: list[dict], judgements: list[dict]) -> dict[tuple[int, str], str]:
+    """'correct' | 'wrong' | 'refused' | 'ungraded' for every (question, setting): shared by report and web export."""
+    verdict = {(j["i"], j["mode"]): j["verdict"] for j in regrade(refs, answers, judgements)}
+    out = {}
+    for a in answers:
+        key = (a["i"], a["mode"])
+        out[key] = "refused" if is_refusal(a["answer"]) else {"CORRECT": "correct", "INCORRECT": "wrong"}.get(verdict.get(key), "ungraded")
+    return out
+
+
+def summarize(q_types: list[str], refs: list[str], answers: list[dict], judgements: list[dict], rankings: list[dict]) -> dict:
+    judgements = regrade(refs, answers, judgements)
+    result = outcomes(refs, answers, judgements)
     out: dict = {"judge": JUDGE_MODEL, "generator": "Qwen/Qwen3.5-4B (4-bit, no thinking)", "modes": {}}
     for mode in MODES:
         recs = [a for a in answers if a["mode"] == mode]
         if not recs:
             continue
         n = len(recs)
-        status = []
-        for a in recs:
-            if is_refusal(a["answer"]):
-                status.append("refused")
-            else:
-                status.append({"CORRECT": "correct", "INCORRECT": "wrong"}.get(verdict.get((a["i"], mode)), "ungraded"))
+        status = [result[(a["i"], mode)] for a in recs]
         gold = [set(rankings[a["i"]]["gold_rows"]) for a in recs]
         has_gold = [bool(g & set(a["rows"])) for a, g in zip(recs, gold)]
         cites = []

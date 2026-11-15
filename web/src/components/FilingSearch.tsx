@@ -1,11 +1,41 @@
 "use client";
 
-import { Building2, CalendarDays, Check, ExternalLink, FileText, Files, MessageSquareQuote, Route } from "lucide-react";
+import { Check, CircleAlert, ExternalLink, FileText, Files, MessageSquareQuote, SearchX, Sparkles } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { prettyDoc, TYPE_LABEL, type QuestionSummary } from "@/lib/types";
+import { prettyDoc, TYPE_LABEL, type GeneratedAnswer, type QuestionSummary } from "@/lib/types";
 import { Highlight, keyTerms, QuestionPicker, snippet, useQuestion } from "./QuestionPicker";
 import { Banner, Card, Pill } from "./ui";
+
+/** The answer without its "Source: [n]" line or inline [n] markers (the sources are shown as chips). */
+function answerBody(text: string): string {
+  return text
+    .replace(/\n?\s*sources?\s*:[\s\S]*$/i, "")
+    .replace(/\s*\[\d{1,2}\]/g, "")
+    .trim();
+}
+
+function OutcomePill({ g }: { g: GeneratedAnswer }) {
+  if (g.outcome === "correct")
+    return (
+      <Pill tone="good">
+        <Check size={13} /> Matches the analysts&apos; answer
+      </Pill>
+    );
+  if (g.outcome === "wrong")
+    return (
+      <Pill tone="warn">
+        <CircleAlert size={13} /> Differs from the analysts&apos; answer
+      </Pill>
+    );
+  if (g.outcome === "refused")
+    return (
+      <Pill>
+        <SearchX size={13} /> Not found in the pages
+      </Pill>
+    );
+  return null;
+}
 
 export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
   const params = useSearchParams();
@@ -25,9 +55,11 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
   };
 
   const hits = useMemo(() => detail?.methods.reranked.slice(0, 5) ?? [], [detail]);
+  const gen = detail?.generated.top5;
+  // Open the page the answer cites; otherwise the top-ranked page.
   useEffect(() => {
-    if (detail && selected === null && hits.length) setSelected(hits[0].row);
-  }, [detail, selected, hits]);
+    if (detail && selected === null && hits.length) setSelected(gen?.cited.find((r) => detail.pages[String(r)]) ?? hits[0].row);
+  }, [detail, selected, hits, gen]);
 
   const terms = detail ? keyTerms(detail.question) : [];
   const page = detail && selected !== null ? detail.pages[String(selected)] : null;
@@ -46,7 +78,7 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
             <Pill>150 analyst questions</Pill>
           </>
         }
-        meta="Pick an analyst question about a company's SEC filing. SumProof finds the pages that answer it and shows them with the matching words marked."
+        meta="Pick an analyst question about a company's SEC filing. SumProof finds the pages that answer it, writes the answer, and shows the page it used."
       >
         <QuestionPicker questions={questions} value={qi} onChange={choose} />
       </Banner>
@@ -56,34 +88,49 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
 
       {detail && (
         <>
-          <Card className="mb-5" title="What the router understood" icon={<Route size={18} />} action={<Pill>{TYPE_LABEL[detail.type] ?? detail.type}</Pill>}>
-            <div className="flex flex-wrap items-center gap-2">
-              {detail.detected ? (
-                <>
-                  <Pill tone="info">
-                    <Building2 size={13} /> {detail.detected.company}
-                  </Pill>
-                  {detail.detected.years.length > 0 && (
-                    <Pill tone="info">
-                      <CalendarDays size={13} /> {detail.detected.years.join(", ")}
-                    </Pill>
-                  )}
-                  {detail.detected.filings.map((f) => (
-                    <Pill key={f}>
-                      <Files size={13} /> {prettyDoc(f)}
-                    </Pill>
-                  ))}
-                </>
-              ) : (
-                <Pill tone="warn">No company named · searched all 84 filings</Pill>
-              )}
+          <Card className="mb-5" title="SumProof's answer" icon={<Sparkles size={18} />} action={gen ? <OutcomePill g={gen} /> : null}>
+            {gen ? (
+              <>
+                <p className="text-[15px] leading-relaxed whitespace-pre-line text-ink">
+                  {gen.outcome === "refused" ? "The retrieved pages do not contain the answer." : answerBody(gen.text)}
+                </p>
+                {gen.cited.length > 0 && (
+                  <div className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-muted">
+                    Source:
+                    {gen.cited.map((row) => {
+                      const p = detail.pages[String(row)];
+                      return p ? (
+                        <button
+                          key={row}
+                          type="button"
+                          onClick={() => setSelected(row)}
+                          className="flex items-center gap-1.5 rounded-full border border-line bg-surface-solid px-3 py-1 text-[12.5px] font-medium text-accent hover:border-accent"
+                        >
+                          <FileText size={13} /> {prettyDoc(p.doc)}, page {p.page + 1}
+                        </button>
+                      ) : null;
+                    })}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="text-[13.5px] text-muted">No generated answer for this question.</p>
+            )}
+
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-3 text-[12.5px] text-muted">
+              <Files size={14} />
+              {detail.detected ? <>Searched {detail.detected.filings.map(prettyDoc).join(", ")}</> : <>No company named, so all 84 filings were searched</>}
+              <span className="ml-auto">
+                <Pill>{TYPE_LABEL[detail.type] ?? detail.type}</Pill>
+              </span>
             </div>
-            <div className="mt-4 rounded-xl border border-line bg-surface-solid p-3.5">
+
+            <div className="mt-3 rounded-xl border border-line bg-sunken p-3.5">
               <button
                 type="button"
                 onClick={() => setShowAnswer((s) => !s)}
                 aria-expanded={showAnswer}
-                className="flex items-center gap-2 text-[13.5px] font-semibold text-accent-deep"
+                className="flex items-center gap-2 text-[13.5px] font-medium text-accent"
               >
                 <MessageSquareQuote size={16} /> {showAnswer ? "Hide" : "Show"} the analysts&apos; reference answer
               </button>
@@ -91,12 +138,13 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
                 <div className="mt-2 text-[13.5px] leading-relaxed text-ink">
                   <p className="font-semibold">{detail.answer}</p>
                   {detail.justification && <p className="mt-1 text-muted">{detail.justification}</p>}
-                  <p className="mt-2 text-[12px] text-muted">
-                    From FinanceBench. SumProof retrieves the evidence pages; writing the answer is the next step (generation).
-                  </p>
                 </div>
               )}
             </div>
+            <p className="mt-3 text-[12px] text-muted">
+              Written by Qwen3.5-4B from the 5 best pages below. AI can misread tables and calculations, so check the source page before
+              relying on a number.
+            </p>
           </Card>
 
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
