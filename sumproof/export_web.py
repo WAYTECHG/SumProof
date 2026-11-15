@@ -117,7 +117,7 @@ def export_questions() -> None:
     rankings = json.loads((RESULTS / "financebench_rankings.json").read_text(encoding="utf-8"))
     (OUT / "q").mkdir(parents=True, exist_ok=True)
     answers = _rows(ANSWERS) if ANSWERS.exists() else []
-    result = outcomes([str(a) for a in q.answer], answers, _rows(JUDGEMENTS) if JUDGEMENTS.exists() else [])
+    result = outcomes([str(a) for a in q.answer], answers, _rows(JUDGEMENTS) if JUDGEMENTS.exists() else [], list(q.question_type))
     generated: dict[int, dict] = {}
     for a in answers:
         cited = [a["rows"][k - 1] for k in parse_citations(a["answer"]) if 1 <= k <= len(a["rows"])]

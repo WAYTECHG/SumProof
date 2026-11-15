@@ -35,9 +35,17 @@ export type QuestionSummary = {
 
 /** How the generated answer compares with the analysts' reference answer. */
 export type Outcome = "correct" | "wrong" | "refused" | "ungraded";
-export type AnswerMode = "closed" | "top5" | "adaptive" | "oracle";
+export type AnswerMode = "closed" | "top5" | "adaptive" | "oracle" | "think_0" | "think_1024" | "think_2048" | "think_4096";
 
-export type GeneratedAnswer = { text: string; rows: number[]; cited: number[]; outcome: Outcome; prompt_tokens: number };
+export type GeneratedAnswer = { text: string; rows: number[]; cited: number[]; outcome: Outcome; prompt_tokens: number; thinking_tokens?: number };
+
+/** Thinking budgets measured on the 50 metric questions (same top-5 pages, Ollama). */
+export const THINK_MODES: { key: AnswerMode; label: string }[] = [
+  { key: "think_0", label: "No thinking" },
+  { key: "think_1024", label: "1,024 tokens" },
+  { key: "think_2048", label: "2,048 tokens" },
+  { key: "think_4096", label: "4,096 tokens" },
+];
 
 export const ANSWER_MODES: { key: AnswerMode; label: string; note: string }[] = [
   { key: "closed", label: "No pages (closed book)", note: "what the model knows" },
@@ -81,9 +89,11 @@ export type Dashboard = {
   train_log: { step: number; epoch: number; loss: number; lr: number }[];
   answers?: {
     judge: string;
-    modes: Record<
-      AnswerMode,
-      { correct: number; wrong: number; refused: number; pages_mean: number; prompt_tokens_mean: number; context_has_evidence_page: number | null }
+    modes: Partial<
+      Record<
+        AnswerMode,
+        { correct: number; wrong: number; refused: number; pages_mean: number; prompt_tokens_mean: number; seconds_mean: number; context_has_evidence_page: number | null }
+      >
     >;
     judge_vs_numeric_rule: { answers: number; agreement: number };
   };

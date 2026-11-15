@@ -55,7 +55,9 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
   };
 
   const hits = useMemo(() => detail?.methods.reranked.slice(0, 5) ?? [], [detail]);
-  const gen = detail?.generated.top5;
+  // The most accurate measured setting: reasoning before answering (calculation questions), else top-5 RAG.
+  const reasoned = detail?.generated.think_4096;
+  const gen = reasoned ?? detail?.generated.top5;
   // Open the page the answer cites; otherwise the top-ranked page.
   useEffect(() => {
     if (detail && selected === null && hits.length) setSelected(gen?.cited.find((r) => detail.pages[String(r)]) ?? hits[0].row);
@@ -88,7 +90,19 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
 
       {detail && (
         <>
-          <Card className="mb-5" title="SumProof's answer" icon={<Sparkles size={18} />} action={gen ? <OutcomePill g={gen} /> : null}>
+          <Card
+            className="mb-5"
+            title="SumProof's answer"
+            icon={<Sparkles size={18} />}
+            action={
+              gen ? (
+                <>
+                  {reasoned && <Pill tone="dark">Reasoned answer</Pill>}
+                  <OutcomePill g={gen} />
+                </>
+              ) : null
+            }
+          >
             {gen ? (
               <>
                 <p className="text-[15px] leading-relaxed whitespace-pre-line text-ink">
@@ -142,8 +156,10 @@ export function FilingSearch({ questions }: { questions: QuestionSummary[] }) {
               )}
             </div>
             <p className="mt-3 text-[12px] text-muted">
-              Written by Qwen3.5-4B from the 5 best pages below. AI can misread tables and calculations, so check the source page before
-              relying on a number.
+              {reasoned
+                ? `Written by Qwen3.5-4B from the 5 best pages below, after reasoning for ${reasoned.thinking_tokens?.toLocaleString("en-US")} tokens: on calculation questions this lifts accuracy from 38% to 68%.`
+                : "Written by Qwen3.5-4B from the 5 best pages below."}{" "}
+              AI can misread tables and calculations, so check the source page before relying on a number.
             </p>
           </Card>
 

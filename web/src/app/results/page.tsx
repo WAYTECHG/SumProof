@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BarBreakdown, TrainingCurve } from "@/components/charts";
 import { Banner, Button, Card, Pill, Stat } from "@/components/ui";
 import { loadDashboard, loadReceipts } from "@/lib/data";
-import { ANSWER_MODES } from "@/lib/types";
+import { ANSWER_MODES, THINK_MODES } from "@/lib/types";
 
 const RECEIPT_ROWS = [
   { key: "zeroshot", label: "Zero-shot" },
@@ -171,6 +171,7 @@ export default function Overview() {
               <tbody className="tabular">
                 {ANSWER_MODES.map(({ key, label, note }) => {
                   const r = ans.modes[key];
+                  if (!r) return null;
                   const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
                   const main = key === "top5" || key === "adaptive";
                   return (
@@ -190,12 +191,51 @@ export default function Overview() {
             </table>
           </div>
           <p className="mt-3 text-[13px] leading-relaxed text-muted">
-            RAG raises correct answers from {(ans.modes.closed.correct * 100).toFixed(0)}% to {(ans.modes.top5.correct * 100).toFixed(0)}%. Keeping
+            RAG raises correct answers from {(ans.modes.closed!.correct * 100).toFixed(0)}% to {(ans.modes.top5!.correct * 100).toFixed(0)}%. Keeping
             pages until they hold 90% of the reranker&apos;s confidence uses{" "}
-            {((1 - ans.modes.adaptive.prompt_tokens_mean / ans.modes.top5.prompt_tokens_mean) * 100).toFixed(0)}% fewer tokens with no
+            {((1 - ans.modes.adaptive!.prompt_tokens_mean / ans.modes.top5!.prompt_tokens_mean) * 100).toFixed(0)}% fewer tokens with no
             significant accuracy change (McNemar p = 0.48). Even with the analysts&apos; own pages a 4B model reaches{" "}
-            {(ans.modes.oracle.correct * 100).toFixed(0)}%, so the next gain is in reasoning, not retrieval. For scale, the FinanceBench paper
+            {(ans.modes.oracle!.correct * 100).toFixed(0)}%, so the next gain is in reasoning, not retrieval. For scale, the FinanceBench paper
             reports GPT-4-Turbo with retrieval failing 81% of these 150 questions.
+          </p>
+        </Card>
+      )}
+
+      {ans?.modes.think_4096 && (
+        <Card className="mt-5" title="Thinking budget (budget forcing)" icon={<Sparkles size={18} />} action={<Pill tone="good">38% to 68%, McNemar p = 0.0001</Pill>}>
+          <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
+            <table className="w-full min-w-[560px] text-[13.5px]">
+              <thead>
+                <tr className="border-b border-line text-left text-[11.5px] tracking-wide text-muted uppercase">
+                  <th className="px-3 py-2.5 font-semibold">Reasoning before answering</th>
+                  <th className="px-3 py-2.5 text-right font-semibold">Correct</th>
+                  <th className="px-3 py-2.5 text-right font-semibold">Wrong</th>
+                  <th className="px-3 py-2.5 text-right font-semibold">Refused</th>
+                  <th className="px-3 py-2.5 text-right font-semibold">Seconds / question</th>
+                </tr>
+              </thead>
+              <tbody className="tabular">
+                {THINK_MODES.map(({ key, label }) => {
+                  const r = ans.modes[key];
+                  if (!r) return null;
+                  const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
+                  return (
+                    <tr key={key} className={`border-b border-line last:border-0 ${key === "think_4096" ? "font-semibold" : ""}`}>
+                      <td className="px-3 py-2.5">{label}</td>
+                      <td className="px-3 py-2.5 text-right">{pct(r.correct)}</td>
+                      <td className="px-3 py-2.5 text-right">{pct(r.wrong)}</td>
+                      <td className="px-3 py-2.5 text-right">{pct(r.refused)}</td>
+                      <td className="px-3 py-2.5 text-right">{r.seconds_mean.toFixed(0)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-[13px] leading-relaxed text-muted">
+            The 50 calculation questions, the same top-5 pages, Qwen3.5-4B in Ollama. The model may reason up to the budget, then must answer
+            (s1 budget forcing). Reasoning cuts wrong answers from 60% to 14%: it more often notices a missing figure and says so instead of
+            guessing. Filing search shows these reasoned answers for the calculation questions.
           </p>
         </Card>
       )}

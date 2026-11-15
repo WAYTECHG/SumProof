@@ -324,19 +324,25 @@ def regrade(refs: list[str], answers: list[dict], judgements: list[dict]) -> lis
     ]
 
 
-def outcomes(refs: list[str], answers: list[dict], judgements: list[dict]) -> dict[tuple[int, str], str]:
-    """'correct' | 'wrong' | 'refused' | 'ungraded' for every (question, setting): shared by report and web export."""
+def outcomes(refs: list[str], answers: list[dict], judgements: list[dict], q_types: list[str] | None = None) -> dict[tuple[int, str], str]:
+    """'correct' | 'wrong' | 'refused' | 'ungraded' for every (question, setting): shared by report and web export.
+
+    Answers the judge never saw (the thinking-budget runs) are still graded when the exact rule applies.
+    """
     verdict = {(j["i"], j["mode"]): j["verdict"] for j in regrade(refs, answers, judgements)}
     out = {}
     for a in answers:
         key = (a["i"], a["mode"])
-        out[key] = "refused" if is_refusal(a["answer"]) else {"CORRECT": "correct", "INCORRECT": "wrong"}.get(verdict.get(key), "ungraded")
+        v = verdict.get(key)
+        if v is None and q_types is not None and reference_number(q_types[a["i"]], refs[a["i"]]) is not None:
+            v = "CORRECT" if numeric_match(a["answer"], refs[a["i"]]) else "INCORRECT"
+        out[key] = "refused" if is_refusal(a["answer"]) else {"CORRECT": "correct", "INCORRECT": "wrong"}.get(v, "ungraded")
     return out
 
 
 def summarize(q_types: list[str], refs: list[str], answers: list[dict], judgements: list[dict], rankings: list[dict]) -> dict:
     judgements = regrade(refs, answers, judgements)
-    result = outcomes(refs, answers, judgements)
+    result = outcomes(refs, answers, judgements, q_types)
     out: dict = {"judge": JUDGE_MODEL, "generator": "Qwen/Qwen3.5-4B (4-bit, no thinking)", "modes": {}}
     for mode in MODES:
         recs = [a for a in answers if a["mode"] == mode]
