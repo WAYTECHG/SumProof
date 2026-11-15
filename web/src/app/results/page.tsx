@@ -196,7 +196,8 @@ export default function Overview() {
             {((1 - ans.modes.adaptive!.prompt_tokens_mean / ans.modes.top5!.prompt_tokens_mean) * 100).toFixed(0)}% fewer tokens with no
             significant accuracy change (McNemar p = 0.48). Even with the analysts&apos; own pages a 4B model reaches{" "}
             {(ans.modes.oracle!.correct * 100).toFixed(0)}%, so the next gain is in reasoning, not retrieval. For scale, the FinanceBench paper
-            reports GPT-4-Turbo with retrieval failing 81% of these 150 questions.
+            (2023, graded by hand) reports GPT-4-Turbo answering 19% of these 150 questions correctly with one search index over all
+            filings and 50% with one index per filing; this pipeline&apos;s routing is closer to the per-filing setting.
           </p>
         </Card>
       )}
