@@ -30,7 +30,7 @@ const MAIN = [
 const WORKSPACE = [
   { href: "/results/", label: "Model results", icon: BarChart3 },
   { href: "/receipts/", label: "Before vs after", icon: ReceiptText },
-  { href: "/compare/", label: "Compare search methods", icon: Columns3 },
+  { href: "/compare/", label: "Search methods", icon: Columns3 },
   { href: "/architecture/", label: "Architecture", icon: Network },
   { href: "/about/", label: "Data & licences", icon: BookOpen },
 ];
@@ -64,7 +64,7 @@ function NavList({ items, path, onNavigate }: { items: typeof MAIN; path: string
               href={href}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14.5px] transition-colors ${
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] transition-colors ${
                 active ? "bg-white/10 font-semibold text-white ring-1 ring-white/15" : "text-nav-ink hover:bg-white/5 hover:text-white"
               }`}
             >
@@ -80,7 +80,7 @@ function NavList({ items, path, onNavigate }: { items: typeof MAIN; path: string
 
 function Sidebar({ path, onNavigate }: { path: string; onNavigate?: () => void }) {
   return (
-    <div className="flex h-full flex-col gap-6 px-4 py-6">
+    <div className="flex min-h-full flex-col gap-5 px-4 py-5">
       <Logo />
       <nav aria-label="App" className="flex flex-col gap-2 border-t border-white/10 pt-5">
         <p className="px-3 text-[11.5px] font-medium tracking-[0.1em] text-nav-muted uppercase">App</p>
@@ -93,7 +93,7 @@ function Sidebar({ path, onNavigate }: { path: string; onNavigate?: () => void }
           href={GITHUB_URL}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14.5px] text-nav-ink hover:bg-white/5 hover:text-white"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] text-nav-ink hover:bg-white/5 hover:text-white"
         >
           <Github size={18} strokeWidth={1.8} className="text-nav-muted" />
           Source code
@@ -118,7 +118,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <aside className="hidden w-[248px] shrink-0 bg-nav lg:block">
-        <div className="sticky top-0 h-screen">
+        <div className="sticky top-0 h-screen overflow-y-auto">
           <Sidebar path={path} />
         </div>
       </aside>
@@ -126,7 +126,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
           <button className="absolute inset-0 bg-black/40" aria-label="Close navigation" onClick={() => setOpen(false)} />
-          <div className="relative h-full w-[272px] bg-nav">
+          <div className="relative h-full w-[272px] overflow-y-auto bg-nav">
             <button
               onClick={() => setOpen(false)}
               aria-label="Close navigation"
