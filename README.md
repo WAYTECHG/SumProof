@@ -4,8 +4,12 @@
 
 # SumProof
 
-**Receipt AI that checks the numbers add up, and evidence search over real SEC filings.**<br>
+**Receipt AI that checks the numbers add up, and cited answers from real SEC filings.**<br>
 Real data · open models · one 8 GB laptop GPU · $0
+
+<p>
+  <a href="https://sumproof.vercel.app"><b>▶ Live demo: sumproof.vercel.app</b></a>
+</p>
 
 <p>
   <b>Models</b><br>
@@ -43,6 +47,7 @@ Real data · open models · one 8 GB laptop GPU · $0
 </p>
 
 <p>
+  <a href="https://sumproof.vercel.app">Live demo</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#interface">Interface</a> ·
   <a href="#results">Results</a> ·
