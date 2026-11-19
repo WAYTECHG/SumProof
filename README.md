@@ -117,7 +117,7 @@ What the results show:
 - **The accounting checker adds a small gain** (+0.5 F1, +3 fully correct receipts) at 2.5× the time, so it suits high-value documents rather than every receipt.
 - **Real receipts are not always consistent:** only 88 of the 100 human labels pass every accounting rule. On the others, the checker prefers a reading that adds up over one that copies the odd printed numbers, which costs one total (100% → 99%).
 - **Remaining errors are mostly item names, not numbers.** Of 37 mismatched names in the fine-tuned run, 7 differ only in spacing or punctuation, 23 are near-misses (often the model "fixing" words the printer cut short, such as `Garlc` → `Garlic`, or a label typo such as `IVINERAL WATER`), and 7 are real errors such as two lines merged into one. The arithmetic checker cannot catch name errors, which is why its flag recall is low after fine-tuning.
-- **Training:** the run was planned for 2 epochs but the host machine ran out of RAM at step 165 of 200; the epoch-1 checkpoint (validation field F1 0.83 → 0.98) is the one evaluated.
+- **Training:** the run was planned for 2 epochs but the host machine ran out of RAM at step 165 of 200; the epoch-1 checkpoint (validation field F1 0.83 → 0.98, tracked on the first 30 validation receipts during training) is the one evaluated. Re-scored afterwards on all 100 validation receipts, it reaches field F1 0.96 with every total correct (`results/val_sft.json`).
 
 ### Financial retrieval: FinanceBench (150 analyst questions, 12,013 pages, 84 filings, 32 companies)
 
