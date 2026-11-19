@@ -28,7 +28,7 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
     return [...keywordMiss.map((q) => ({ q, why: "BM25 misses, reranker #1" })), ...routingHelps.map((q) => ({ q, why: "dense misses, routing finds it" }))];
   }, [questions]);
   const [qi, setQi] = useState(Number.isInteger(fromUrl) && fromUrl >= 0 && fromUrl < questions.length ? fromUrl : interesting[0]?.q.i ?? 0);
-  const { detail } = useQuestion(qi);
+  const { detail, error } = useQuestion(qi);
 
   const choose = (i: number) => {
     setQi(i);
@@ -64,7 +64,8 @@ export function CompareMethods({ questions, metrics }: { questions: QuestionSumm
         </div>
       </Banner>
 
-      {!detail && <Card>Loading the question…</Card>}
+      {error && <Card>Could not load this question. Check that the website is still running and the exported data is present in public/data/q.</Card>}
+      {!detail && !error && <Card>Loading the question…</Card>}
 
       {detail && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">

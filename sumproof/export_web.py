@@ -148,7 +148,9 @@ def export_questions() -> None:
                         "years": years, "filings": filings}
         detail = {
             "i": r["i"], "question": row.question, "company": row.company, "type": row.question_type,
-            "answer": row.answer, "justification": row.justification, "doc_link": row.doc_link,
+            # Some questions have no justification; pandas gives NaN, which browsers reject as JSON.
+            "answer": row.answer, "justification": None if pd.isna(row.justification) else row.justification,
+            "doc_link": row.doc_link,
             "gold": [{"row": int(j), "doc": pages.doc_name.iloc[j], "page": int(pages.page.iloc[j])} for j in sorted(gold)],
             "detected": detected,
             "methods": methods,
@@ -156,7 +158,7 @@ def export_questions() -> None:
             "pages": {str(j): {"doc": pages.doc_name.iloc[j], "page": int(pages.page.iloc[j]),
                                "text": pages.text.iloc[j][:PAGE_CHARS]} for j in sorted(shown)},
         }
-        (OUT / "q" / f"{r['i']}.json").write_text(json.dumps(detail, ensure_ascii=False), encoding="utf-8")
+        (OUT / "q" / f"{r['i']}.json").write_text(json.dumps(detail, ensure_ascii=False, allow_nan=False), encoding="utf-8")
         first_hit = lambda m: next((k + 1 for k, h in enumerate(methods[m]) if h["gold"]), None)
         index.append({"i": r["i"], "question": row.question, "company": row.company, "type": row.question_type,
                       "rank": {m: first_hit(m) for m in METHODS},
