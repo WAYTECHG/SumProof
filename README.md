@@ -60,7 +60,7 @@ Real data · open models · one 8 GB laptop GPU · $0
 ## Highlights
 
 - **Receipt extraction:** Qwen3.5-4B (Feb 2026), a natively multimodal model, fine-tuned with QLoRA on one 8 GB laptop GPU. Fine-tuning raised field F1 from **0.79 to 0.94** and fully correct receipts from **6 to 62 out of 100**.
-- **Accounting checker:** sample several readings and keep the one that obeys the receipt's arithmetic (items sum to the subtotal, subtotal + tax − discount = total, cash − change = total). Readings that break a rule go to human review.
+- **Accounting checker:** sample several readings and keep the one that obeys the receipt's arithmetic (items sum to the subtotal, subtotal + tax − discount = total, cash − change = total). Readings that break a rule are flagged for human review.
 - **Financial retrieval:** search over **12,013 pages of 84 real SEC filings** (FinanceBench), scored against evidence pages labelled by financial analysts. Qwen3-Embedding + company/year routing + Qwen3-Reranker: **Recall@5 0.53 → 0.71**.
 - **Local agent (MCP + Ollama):** SumProof's tools served over the Model Context Protocol and used by Qwen3.5-4B in Ollama: 100% on 22 receipt tasks; on calculation questions it matches plain RAG, because the 4B model calls the calculator in only 4% of tasks.
 - **Vector storage:** FAISS and PostgreSQL + pgvector (with the routing as a SQL filter), verified to return identical results.
@@ -75,7 +75,7 @@ Solid boxes run for every request; dashed boxes are offline steps that run once.
 **A. Receipt reader** (`sumproof/receipts/`)
 1. **Read:** the photo goes straight into Qwen3.5-4B, a vision-language model. Its vision encoder turns the image into up to ~800 image tokens and the language model writes the receipt as JSON. There is no separate OCR step (`vlm.py`).
 2. **Sample:** besides the normal (greedy) reading, the model samples 4 more, giving 5 candidates (`vlm.generate`).
-3. **Check:** each candidate is tested against the receipt's arithmetic. The checker keeps the one that passes the most rules; if even that one breaks a rule, the receipt goes to human review (`consistency.py`).
+3. **Check:** each candidate is tested against the receipt's arithmetic. The checker keeps the one that passes the most rules; if even that one breaks a rule, the receipt is flagged for human review (`consistency.py`).
 4. **Fine-tune (offline):** QLoRA trains a small LoRA adapter (0.67% of the weights) on 800 real CORD receipts while the 4-bit base model stays frozen; the adapter plugs into the language model at inference (`train_qlora.py`).
 
 **B. Financial filing search** (`sumproof/rag/`)
@@ -104,9 +104,9 @@ Reading your own photos needs the fine-tuned model on a GPU (see *Run it*); the 
 | Model | Field F1 | Number fields F1 | Receipts fully correct | Totals correct | s / receipt |
 |---|---|---|---|---|---|
 | Qwen3.5-4B zero-shot | 0.791 | 0.803 | 6 / 100 | 97.9% | 14.9 |
-| + best-of-4 with accounting checker | 0.800 | 0.812 | 7 / 100 | 95.8% | 37.0 |
+| + best-of-5 with accounting checker (greedy + 4 samples) | 0.800 | 0.812 | 7 / 100 | 95.8% | 37.0 |
 | **+ QLoRA fine-tune (1 epoch)** | **0.935** | **0.962** | **59 / 100** | **100%** | **11.0** |
-| + fine-tune + best-of-4 | **0.940** | **0.965** | **62 / 100** | 99.0% | 28.1 |
+| + fine-tune + best-of-5 | **0.940** | **0.965** | **62 / 100** | 99.0% | 28.1 |
 
 All outputs were valid JSON in every run. Field F1 counts every (field, value) pair, with money amounts normalised ("91.000" = "91000"); "number fields" excludes item names.
 

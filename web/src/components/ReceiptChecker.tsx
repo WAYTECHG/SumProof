@@ -93,7 +93,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
             {record.exact && <Pill>matches human label</Pill>}
           </>
         }
-        meta="CORD-v2 test receipt · read by Qwen3.5-4B (QLoRA) with best-of-4 and the accounting checker"
+        meta="CORD-v2 test receipt · read by Qwen3.5-4B (QLoRA) with best-of-5 and the accounting checker"
         right={
           <>
             {prev !== null ? (
@@ -197,7 +197,7 @@ export function ReceiptChecker({ record, prev, next }: { record: ReceiptRecord; 
                 </Pill>
               ) : (
                 <Pill tone="warn">
-                  <CircleAlert size={14} /> goes to human review
+                  <CircleAlert size={14} /> flagged for review
                 </Pill>
               )
             }

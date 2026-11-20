@@ -41,9 +41,11 @@ export function BarBreakdown({
 export function TrainingCurve({
   log,
   val,
+  valFull,
 }: {
   log: { step: number; loss: number; lr: number }[];
   val: { field_f1: number; epoch: number }[];
+  valFull?: { field_f1: number; n: number };
 }) {
   const W = 620;
   const H = 248;
@@ -105,6 +107,14 @@ export function TrainingCurve({
           </span>
         ))}
       </div>
+      {valFull && (
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px]">
+          <span className="text-muted">Epoch 1 re-scored on all {valFull.n} validation receipts after training:</span>
+          <span className="tabular rounded-full border border-line bg-surface-solid px-2.5 py-1 font-semibold text-ink">
+            field F1 <span className="text-accent-deep">{valFull.field_f1.toFixed(2)}</span>
+          </span>
+        </div>
+      )}
     </div>
   );
 }

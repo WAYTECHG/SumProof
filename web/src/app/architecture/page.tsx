@@ -5,7 +5,7 @@ import { Banner, Card, Pill } from "@/components/ui";
 const RECEIPT_STEPS = [
   ["Read", "The photo goes straight into Qwen3.5-4B, a vision-language model. Its vision encoder turns the image into up to ~800 image tokens and the language model writes the receipt as JSON. There is no separate OCR step.", "receipts/vlm.py"],
   ["Sample", "Besides the normal (greedy) reading, the model samples four more, giving five candidates.", "vlm.generate"],
-  ["Check", "Each candidate is tested against the receipt's arithmetic. The checker keeps the one that passes the most rules; if even that one breaks a rule, the receipt goes to human review.", "receipts/consistency.py"],
+  ["Check", "Each candidate is tested against the receipt's arithmetic. The checker keeps the one that passes the most rules; if even that one breaks a rule, the receipt is flagged for human review.", "receipts/consistency.py"],
   ["Fine-tune (offline)", "QLoRA trains a small LoRA adapter (0.67% of the weights) on 800 real CORD receipts while the 4-bit base model stays frozen; the adapter plugs into the language model at inference.", "receipts/train_qlora.py"],
 ];
 const SEARCH_STEPS = [

@@ -7,7 +7,7 @@ import { ANSWER_MODES, THINK_MODES } from "@/lib/types";
 
 const RECEIPT_ROWS = [
   { key: "zeroshot", label: "Zero-shot" },
-  { key: "zeroshot_best4", label: "+ checker (best-of-4)" },
+  { key: "zeroshot_best4", label: "+ checker (best-of-5)" },
   { key: "sft", label: "+ QLoRA fine-tune" },
   { key: "sft_best4", label: "+ fine-tune + checker" },
 ] as const;
@@ -66,7 +66,7 @@ export default function Overview() {
       </div>
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <Card title="Receipt reader results" icon={<ReceiptText size={18} />} action={<Pill tone="warn">{flagged} sent to review</Pill>}>
+        <Card title="Receipt reader results" icon={<ReceiptText size={18} />} action={<Pill tone="warn">{flagged} flagged for review</Pill>}>
           <div className="relative overflow-x-auto rounded-xl border border-line bg-surface-solid">
             <table className="w-full text-[13px]">
               <thead>
@@ -113,7 +113,7 @@ export default function Overview() {
         </Card>
 
         <Card title="QLoRA training" icon={<LineChart size={18} />} action={<Pill>30.5M trainable params · 7.2 GB peak</Pill>}>
-          <TrainingCurve log={d.train_log} val={d.val_log} />
+          <TrainingCurve log={d.train_log} val={d.val_log} valFull={d.val_full} />
         </Card>
 
         <Card title="Vector stores" icon={<Database size={18} />} action={<Pill tone="good">identical top-10 · 150/150</Pill>}>

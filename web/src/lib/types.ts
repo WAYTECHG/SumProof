@@ -5,7 +5,7 @@ export type Candidate = { kind: "greedy" | "sampled"; valid: boolean; consistenc
 export type ReceiptRecord = {
   id: number;
   image: string;
-  pred: Receipt | null; // fine-tuned Qwen3.5-4B + best-of-4 with the accounting checker
+  pred: Receipt | null; // fine-tuned Qwen3.5-4B + best-of-5 with the accounting checker
   zeroshot: Receipt | null; // the same model before fine-tuning
   gold: Receipt; // human label from CORD-v2
   flagged: boolean; // the checker sent it to human review
@@ -98,6 +98,8 @@ export type Dashboard = {
     judge_vs_numeric_rule: { answers: number; agreement: number };
   };
   val_log: { field_f1: number; total_accuracy: number; epoch: number }[];
+  /** The evaluated checkpoint re-scored on all 100 validation receipts after training. */
+  val_full?: { field_f1: number; total_accuracy: number; n: number };
 };
 
 export const TYPE_LABEL: Record<string, string> = {
