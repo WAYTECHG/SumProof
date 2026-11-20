@@ -105,6 +105,8 @@ def export_dashboard() -> None:
         "train_log": load("runs/sft/train_log.json"),
         "val_log": load("runs/sft/val_log.json"),
     }
+    if (RESULTS / "val_sft.json").exists():  # epoch-1 checkpoint re-scored on all 100 validation receipts
+        dash["val_full"] = load(RESULTS / "val_sft.json")["metrics"]
     if SUMMARY.exists():
         dash["answers"] = load(SUMMARY)
     (OUT / "dashboard.json").write_text(json.dumps(dash), encoding="utf-8")
